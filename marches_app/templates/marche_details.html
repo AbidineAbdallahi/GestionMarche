@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ marche.titre }} | Détails du marché</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --primary-light: #eef2ff;
+            --secondary-color: #3a0ca3;
+            --accent-color: #4cc9f0;
+            --success-color: #2ec4b6;
+            --warning-color: #ff9f1c;
+            --danger-color: #e71d36;
+            --light-color: #f8f9fa;
+            --dark-color: #1a1d28;
+            --gray-color: #6c757d;
+            --border-color: #e1e5f1;
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --hover-shadow: 0 15px 40px rgba(67, 97, 238, 0.15);
+            --gradient-primary: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+        }
+        
+        * {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7ff 0%, #f0f2ff 100%);
+            color: var(--dark-color);
+            min-height: 100vh;
+            padding-bottom: 40px;
+        }
+        
+        .header-gradient {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 40px 0 30px;
+            margin-bottom: 40px;
+            border-radius: 0 0 25px 25px;
+            box-shadow: 0 10px 30px rgba(67, 97, 238, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header-gradient::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #4cc9f0, #2ec4b6, #ff9f1c);
+        }
+        
+        .page-title {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            line-height: 1.3;
+        }
+        
+        .page-subtitle {
+            opacity: 0.9;
+            font-weight: 300;
+            font-size: 1.1rem;
+            max-width: 800px;
+        }
+        
+        .info-card {
+            background: white;
+            border-radius: 20px;
+            padding: 0;
+            margin-bottom: 30px;
+            box-shadow: var(--card-shadow);
+            border: none;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--hover-shadow);
+        }
+        
+        .card-header-custom {
+            background: linear-gradient(to right, #f8f9fa, #eef2ff);
+            border-bottom: 1px solid var(--border-color);
+            padding: 25px 30px;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        
+        .card-header-custom h3 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            color: var(--secondary-color);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .status-badge {
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .status-ouvert {
+            background-color: rgba(46, 196, 182, 0.15);
+            color: var(--success-color);
+            border: 1px solid rgba(46, 196, 182, 0.3);
+        }
+        
+        .status-cloture {
+            background-color: rgba(231, 29, 54, 0.1);
+            color: var(--danger-color);
+            border: 1px solid rgba(231, 29, 54, 0.2);
+        }
+        
+        .status-annule {
+            background-color: rgba(108, 117, 125, 0.15);
+            color: var(--gray-color);
+            border: 1px solid rgba(108, 117, 125, 0.3);
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            padding: 30px;
+        }
+        
+        .info-item {
+            padding: 15px 0;
+            border-bottom: 1px dashed var(--border-color);
+        }
+        
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: var(--secondary-color);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95rem;
+        }
+        
+        .info-value {
+            font-size: 1.1rem;
+            color: var(--dark-color);
+            font-weight: 500;
+        }
+        
+        .montant-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .documents-card {
+            background: white;
+            border-radius: 20px;
+            padding: 0;
+            margin-bottom: 40px;
+            box-shadow: var(--card-shadow);
+            border: none;
+            overflow: hidden;
+        }
+        
+        .documents-list {
+            padding: 25px;
+        }
+        
+        .document-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            margin-bottom: 15px;
+            background: var(--light-color);
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+        }
+        
+        .document-item:hover {
+            background: white;
+            border-color: var(--primary-color);
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.1);
+        }
+        
+        .document-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex: 1;
+        }
+        
+        .document-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary-light), white);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+        
+        .document-name {
+            font-weight: 500;
+            color: var(--dark-color);
+            margin-bottom: 5px;
+        }
+        
+        .document-type {
+            font-size: 0.85rem;
+            color: var(--gray-color);
+            background: rgba(108, 117, 125, 0.1);
+            padding: 3px 10px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        
+        .btn-download {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 20px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+        
+        .btn-download:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+            color: white;
+        }
+        
+        .btn-back {
+            background: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            border-radius: 12px;
+            padding: 12px 25px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        
+        .btn-back:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.2);
+        }
+        
+        .empty-documents {
+            padding: 40px 20px;
+            text-align: center;
+            color: var(--gray-color);
+        }
+        
+        .empty-documents i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: #e1e5f1;
+        }
+        
+        .metadata {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .metadata-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--gray-color);
+            font-size: 0.9rem;
+        }
+        
+        .date-highlight {
+            background: linear-gradient(135deg, rgba(67, 97, 238, 0.1), rgba(76, 201, 240, 0.1));
+            padding: 12px 20px;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        @media (max-width: 768px) {
+            .header-gradient {
+                padding: 30px 0 25px;
+                border-radius: 0 0 20px 20px;
+            }
+            
+            .page-title {
+                font-size: 1.8rem;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+                padding: 20px;
+                gap: 15px;
+            }
+            
+            .card-header-custom {
+                padding: 20px;
+            }
+            
+            .document-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .document-info {
+                width: 100%;
+            }
+            
+            .btn-download {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- En-tête -->
+    <div class="header-gradient">
+        <div class="container">
+            <nav aria-label="breadcrumb" class="mb-3">
+                <ol class="breadcrumb" style="background: transparent; padding: 0;">
+                    <li class="breadcrumb-item"><a href="{% url 'marche_list' %}" style="color: rgba(255,255,255,0.8); text-decoration: none;">Liste des marchés</a></li>
+                    <li class="breadcrumb-item active" aria-current="page" style="color: white;">Détails</li>
+                </ol>
+            </nav>
+            
+            <h1 class="page-title">{{ marche.titre }}</h1>
+            <p class="page-subtitle">Informations complètes sur le marché public. Consultez les détails, dates clés et documents associés.</p>
+            
+            <div class="metadata mt-3">
+                <div class="metadata-item">
+                    <i class="fas fa-hashtag"></i>
+                    <span>Référence : <strong>#{{ marche.id }}</strong></span>
+                </div>
+                <div class="metadata-item">
+                    <i class="far fa-calendar-alt"></i>
+                    <span>Consulté le : {{ "now"|date:"d/m/Y" }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Carte d'informations principales -->
+        <div class="info-card">
+            <div class="card-header-custom">
+                <h3><i class="fas fa-info-circle"></i> Informations du marché</h3>
+                {% if marche.statut == "Ouvert" %}
+                <span class="status-badge status-ouvert">
+                    <i class="fas fa-lock-open"></i> {{ marche.statut }}
+                </span>
+                {% elif marche.statut == "Clôturé" %}
+                <span class="status-badge status-cloture">
+                    <i class="fas fa-lock"></i> {{ marche.statut }}
+                </span>
+                {% else %}
+                <span class="status-badge status-annule">
+                    <i class="fas fa-ban"></i> {{ marche.statut }}
+                </span>
+                {% endif %}
+            </div>
+            
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">
+                        <i class="fas fa-university"></i> Autorité contractante
+                    </div>
+                    <div class="info-value">{{ marche.autorite }}</div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-label">
+                        <i class="fas fa-file-alt"></i> Type de publication
+                    </div>
+                    <div class="info-value">
+                        <span class="badge bg-primary bg-opacity-10 text-primary p-2">
+                            {{ marche.type_publication }}
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="info-item date-highlight">
+                    <div class="info-label">
+                        <i class="fas fa-calendar-check"></i> Date de publication
+                    </div>
+                    <div class="info-value">{{ marche.date_publication }}</div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-label">
+                        <i class="fas fa-play-circle"></i> Date de début
+                    </div>
+                    <div class="info-value">{{ marche.date_debut }}</div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-label">
+                        <i class="fas fa-flag-checkered"></i> Date de fin
+                    </div>
+                    <div class="info-value">{{ marche.date_fin }}</div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-label">
+                        <i class="fas fa-money-bill-wave"></i> Montant estimé
+                    </div>
+                    <div class="montant-value">{{ marche.montant }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section documents -->
+        <div class="documents-card">
+            <div class="card-header-custom">
+                <h3><i class="fas fa-folder-open"></i> Documents associés</h3>
+                <span class="badge bg-primary bg-opacity-10 text-primary p-2">
+                    {{ documents|length }} document{{ documents|pluralize }}
+                </span>
+            </div>
+            
+            <div class="documents-list">
+                {% for doc in documents %}
+                <div class="document-item">
+                    <div class="document-info">
+                        <div class="document-icon">
+                            {% if doc.file_name|lower|slice:"-4:" == ".pdf" %}
+                            <i class="fas fa-file-pdf"></i>
+                            {% elif doc.file_name|lower|slice:"-5:" == ".docx" or doc.file_name|lower|slice:"-4:" == ".doc" %}
+                            <i class="fas fa-file-word"></i>
+                            {% elif doc.file_name|lower|slice:"-5:" == ".xlsx" or doc.file_name|lower|slice:"-4:" == ".xls" %}
+                            <i class="fas fa-file-excel"></i>
+                            {% elif doc.file_name|lower|slice:"-5:" == ".pptx" or doc.file_name|lower|slice:"-4:" == ".ppt" %}
+                            <i class="fas fa-file-powerpoint"></i>
+                            {% elif doc.file_name|lower|slice:"-4:" == ".zip" or doc.file_name|lower|slice:"-4:" == ".rar" %}
+                            <i class="fas fa-file-archive"></i>
+                            {% else %}
+                            <i class="fas fa-file"></i>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <div class="document-name">{{ doc.file_name }}</div>
+                            <div class="document-type">
+                                {% if doc.file_name|lower|slice:"-4:" == ".pdf" %}PDF
+                                {% elif doc.file_name|lower|slice:"-5:" == ".docx" %}Word
+                                {% elif doc.file_name|lower|slice:"-4:" == ".doc" %}Word
+                                {% elif doc.file_name|lower|slice:"-5:" == ".xlsx" %}Excel
+                                {% elif doc.file_name|lower|slice:"-4:" == ".xls" %}Excel
+                                {% elif doc.file_name|lower|slice:"-5:" == ".pptx" %}PowerPoint
+                                {% elif doc.file_name|lower|slice:"-4:" == ".ppt" %}PowerPoint
+                                {% elif doc.file_name|lower|slice:"-4:" == ".zip" %}Archive
+                                {% elif doc.file_name|lower|slice:"-4:" == ".rar" %}Archive
+                                {% else %}Document{% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{{ doc.file_url }}" class="btn btn-download" download>
+                        <i class="fas fa-download"></i> Télécharger
+                    </a>
+                </div>
+                {% empty %}
+                <div class="empty-documents">
+                    <i class="fas fa-folder-open"></i>
+                    <h4>Aucun document disponible</h4>
+                    <p class="mb-0">Aucun document n'est associé à ce marché pour le moment.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <a href="{% url 'marche_list' %}" class="btn-back">
+                <i class="fas fa-arrow-left"></i> Retour à la liste
+            </a>
+            
+            <div class="d-flex gap-2">
+                <button class="btn btn-outline-primary" onclick="window.print()">
+                    <i class="fas fa-print"></i> Imprimer
+                </button>
+                <button class="btn btn-outline-secondary">
+                    <i class="fas fa-share-alt"></i> Partager
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Animation d'entrée
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animation des cartes
+            const cards = document.querySelectorAll('.info-card, .documents-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 200);
+            });
+            
+            // Animation des éléments de liste
+            const documentItems = document.querySelectorAll('.document-item');
+            documentItems.forEach((item, index) => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateX(-20px)';
+                
+                setTimeout(() => {
+                    item.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateX(0)';
+                }, 400 + (index * 100));
+            });
+            
+            // Fonction de partage
+            document.querySelector('.btn-outline-secondary').addEventListener('click', function() {
+                if (navigator.share) {
+                    navigator.share({
+                        title: '{{ marche.titre }}',
+                        text: 'Détails du marché public : {{ marche.titre }}',
+                        url: window.location.href,
+                    })
+                    .catch(console.error);
+                } else {
+                    // Fallback pour les navigateurs qui ne supportent pas l'API Web Share
+                    navigator.clipboard.writeText(window.location.href);
+                    alert('Lien copié dans le presse-papier !');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

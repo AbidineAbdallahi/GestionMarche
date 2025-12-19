@@ -1,0 +1,575 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portail des Marchés Publics | Liste</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3a0ca3;
+            --accent-color: #4cc9f0;
+            --success-color: #2ec4b6;
+            --warning-color: #ff9f1c;
+            --danger-color: #e71d36;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --gray-color: #6c757d;
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --hover-shadow: 0 15px 40px rgba(67, 97, 238, 0.15);
+        }
+        
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7ff;
+            color: var(--dark-color);
+            padding-bottom: 50px;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--primary-color) !important;
+            font-size: 1.8rem;
+        }
+        
+        .header-section {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 40px 0 30px;
+            border-radius: 0 0 20px 20px;
+            margin-bottom: 40px;
+            box-shadow: 0 5px 20px rgba(67, 97, 238, 0.3);
+        }
+        
+        .page-title {
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .page-subtitle {
+            opacity: 0.9;
+            font-weight: 300;
+            font-size: 1.1rem;
+        }
+        
+        .filter-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: var(--card-shadow);
+            border: none;
+        }
+        
+        .filter-title {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .form-control, .form-select {
+            border-radius: 10px;
+            padding: 12px 15px;
+            border: 1px solid #e1e5f1;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.15);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            border-radius: 10px;
+            padding: 12px 20px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+        }
+        
+        .btn-filter {
+            background-color: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            border-radius: 10px;
+            padding: 12px 20px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .btn-filter:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .main-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            border: none;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .main-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--hover-shadow);
+        }
+        
+        .card-header-custom {
+            background: linear-gradient(to right, #f8f9fa, #eef2ff);
+            border-bottom: 1px solid #e1e5f1;
+            padding: 20px 30px;
+            border-radius: 20px 20px 0 0 !important;
+        }
+        
+        .table-custom {
+            margin-bottom: 0;
+        }
+        
+        .table-custom thead th {
+            border-bottom: 2px solid #e1e5f1;
+            color: var(--secondary-color);
+            font-weight: 600;
+            padding: 18px 15px;
+            white-space: nowrap;
+        }
+        
+        .table-custom tbody tr {
+            transition: all 0.2s;
+            border-bottom: 1px solid #f1f3f9;
+        }
+        
+        .table-custom tbody tr:hover {
+            background-color: #f8faff;
+            transform: scale(1.002);
+        }
+        
+        .table-custom tbody td {
+            padding: 18px 15px;
+            vertical-align: middle;
+        }
+        
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+        
+        .status-ouvert {
+            background-color: rgba(46, 196, 182, 0.15);
+            color: var(--success-color);
+        }
+        
+        .status-cloture {
+            background-color: rgba(231, 29, 54, 0.1);
+            color: var(--danger-color);
+        }
+        
+        .status-annule {
+            background-color: rgba(108, 117, 125, 0.15);
+            color: var(--gray-color);
+        }
+        
+        .type-badge {
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary-color);
+        }
+        
+        .btn-details {
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary-color);
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border: none;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .btn-details:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(67, 97, 238, 0.2);
+        }
+        
+        .pagination-custom .page-link {
+            color: var(--primary-color);
+            border: 1px solid #e1e5f1;
+            padding: 10px 18px;
+            margin: 0 5px;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+        
+        .pagination-custom .page-link:hover {
+            background-color: #f0f3ff;
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+        
+        .pagination-custom .page-item.active .page-link {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+        
+        .results-count {
+            color: var(--gray-color);
+            font-size: 0.95rem;
+        }
+        
+        .empty-state {
+            padding: 60px 20px;
+            text-align: center;
+            color: var(--gray-color);
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: #e1e5f1;
+        }
+        
+        .empty-state h4 {
+            color: var(--gray-color);
+            margin-bottom: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .header-section {
+                padding: 30px 0 20px;
+                border-radius: 0 0 15px 15px;
+            }
+            
+            .filter-card {
+                padding: 20px;
+            }
+            
+            .table-responsive {
+                border-radius: 15px;
+                overflow: hidden;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <div class="header-section">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="page-title"><i class="fas fa-file-contract me-2"></i>Portail des Marchés Publics</h1>
+                <div class="d-none d-md-block">
+                    <span class="badge bg-light text-primary fs-6 p-3">{{ marches.paginator.count }} marchés</span>
+                </div>
+                 <div class="d-none d-md-block">
+                    <span class="badge bg-light text-primary fs-6 p-3">PPMS_MARCHES</span>
+                </div>
+            </div>
+            <p class="page-subtitle">Consultez et gérez l'ensemble des marchés publics. Utilisez les filtres pour affiner votre recherche.</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Filtres -->
+        <div class="filter-card">
+            <h4 class="filter-title"><i class="fas fa-filter"></i> Filtres de recherche</h4>
+            <form method="get" class="row g-3">
+                <div class="col-lg-4 col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0"><i class="fas fa-search text-primary"></i></span>
+                        <input name="search" value="{{ search }}" type="text" class="form-control border-start-0" placeholder="Rechercher par titre, autorité...">
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0"><i class="fas fa-tag text-primary"></i></span>
+                        <select name="statut" class="form-select border-start-0">
+                            <option value="">Tous les statuts</option>
+                            <option value="Ouvert" {% if statut == "Ouvert" %}selected{% endif %}>Ouvert</option>
+                            <option value="Clôturé" {% if statut == "Clôturé" %}selected{% endif %}>Clôturé</option>
+                            <option value="Annulé" {% if statut == "Annulé" %}selected{% endif %}>Annulé</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0"><i class="fas fa-file-alt text-primary"></i></span>
+                        <select name="type" class="form-select border-start-0">
+                            <option value="">Tous les types</option>
+                            <option value="Avis" {% if type_pub == "Avis" %}selected{% endif %}>Avis</option>
+                            <option value="Consultation" {% if type_pub == "Consultation" %}selected{% endif %}>Consultation</option>
+                            <option value="Appel d'offre" {% if type_pub == "Appel d'offre" %}selected{% endif %}>Appel d'offre</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-lg-2 col-md-6">
+                    <button class="btn btn-primary w-100 h-100">
+                        <i class="fas fa-search me-2"></i> Appliquer
+                    </button>
+                </div>
+                
+                {% if search or statut or type_pub %}
+                <div class="col-12 mt-3">
+                    <div class="d-flex align-items-center flex-wrap gap-2">
+                        <span class="text-muted">Filtres actifs :</span>
+                        {% if search %}
+                        <span class="badge bg-primary bg-opacity-10 text-primary p-2">
+                            Recherche: "{{ search }}"
+                            <a href="?{% if statut %}statut={{ statut }}&{% endif %}{% if type_pub %}type={{ type_pub }}&{% endif %}page={{ marches.number }}" class="text-primary ms-2">
+                                <i class="fas fa-times"></i>
+                            </a>
+                        </span>
+                        {% endif %}
+                        {% if statut %}
+                        <span class="badge bg-primary bg-opacity-10 text-primary p-2">
+                            Statut: {{ statut }}
+                            <a href="?{% if search %}search={{ search }}&{% endif %}{% if type_pub %}type={{ type_pub }}&{% endif %}page={{ marches.number }}" class="text-primary ms-2">
+                                <i class="fas fa-times"></i>
+                            </a>
+                        </span>
+                        {% endif %}
+                        {% if type_pub %}
+                        <span class="badge bg-primary bg-opacity-10 text-primary p-2">
+                            Type: {{ type_pub }}
+                            <a href="?{% if search %}search={{ search }}&{% endif %}{% if statut %}statut={{ statut }}&{% endif %}page={{ marches.number }}" class="text-primary ms-2">
+                                <i class="fas fa-times"></i>
+                            </a>
+                        </span>
+                        {% endif %}
+                        <a href="?" class="btn btn-sm btn-outline-primary ms-auto">
+                            <i class="fas fa-redo me-1"></i> Réinitialiser
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+            </form>
+        </div>
+
+        <!-- Résultats -->
+        <div class="main-card">
+            <div class="card-header-custom d-flex justify-content-between align-items-center flex-wrap">
+                <h5 class="mb-0"><i class="fas fa-list me-2"></i> Liste des marchés</h5>
+                <div class="results-count mt-2 mt-md-0">
+                    Affichage de {{ marches.start_index }} à {{ marches.end_index }} sur {{ marches.paginator.count }} résultats
+                </div>
+            </div>
+            
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-custom">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Titre</th>
+                                <th>Autorité contractante</th>
+                                <th>Statut</th>
+                                <th>Type</th>
+                                <th>Date publication</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for m in marches %}
+                            <tr>
+                                <td><strong>#{{ m.id }}</strong></td>
+                                <td>
+                                    <div class="fw-medium">{{ m.titre|truncatechars:40 }}</div>
+                                    {% if m.titre|length > 40 %}
+                                    <small class="text-muted">{{ m.titre }}</small>
+                                    {% endif %}
+                                </td>
+                                <td>{{ m.autorite|truncatechars:25 }}</td>
+                                <td>
+                                    {% if m.statut == "Ouvert" %}
+                                    <span class="status-badge status-ouvert"><i class="fas fa-lock-open me-1"></i> {{ m.statut }}</span>
+                                    {% elif m.statut == "Clôturé" %}
+                                    <span class="status-badge status-cloture"><i class="fas fa-lock me-1"></i> {{ m.statut }}</span>
+                                    {% else %}
+                                    <span class="status-badge status-annule"><i class="fas fa-ban me-1"></i> {{ m.statut }}</span>
+                                    {% endif %}
+                                </td>
+                                <td><span class="type-badge">{{ m.type_publication }}</span></td>
+                                <td><i class="far fa-calendar-alt me-1 text-muted"></i> {{ m.date_publication|date:"d/m/Y" }}</td>
+                                <td>
+                                    <a href="{% url 'marche_detail' m.id %}" class="btn btn-details">
+                                        <i class="fas fa-eye me-1"></i> Détails
+                                    </a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="7">
+                                    <div class="empty-state">
+                                        <i class="fas fa-inbox"></i>
+                                        <h4>Aucun marché trouvé</h4>
+                                        <p class="mb-4">Aucun marché ne correspond à vos critères de recherche.</p>
+                                        <a href="?" class="btn btn-primary">
+                                            <i class="fas fa-redo me-2"></i> Réinitialiser les filtres
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            {% if marches.paginator.num_pages > 1 %}
+            <div class="card-footer bg-transparent border-top">
+                <nav class="mt-3">
+                    <ul class="pagination pagination-custom justify-content-center">
+
+                        <!-- Précédent -->
+                        {% if marches.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link"
+                               href="?page={{ marches.previous_page_number }}&search={{ search }}&statut={{ statut }}&type={{ type_pub }}">
+                                <i class="fas fa-chevron-left me-1"></i> Précédent
+                            </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link"><i class="fas fa-chevron-left me-1"></i> Précédent</span>
+                        </li>
+                        {% endif %}
+
+                        <!-- Première page -->
+                        {% if marches.number > 3 %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1&search={{ search }}&statut={{ statut }}&type={{ type_pub }}">1</a>
+                        </li>
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                        {% endif %}
+
+                        <!-- Numéros -->
+                        {% for num in marches.paginator.page_range %}
+                            {% if num >= marches.number|add:"-2" and num <= marches.number|add:"2" %}
+                                {% if marches.number == num %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ num }}</span>
+                                </li>
+                                {% else %}
+                                <li class="page-item">
+                                    <a class="page-link"
+                                       href="?page={{ num }}&search={{ search }}&statut={{ statut }}&type={{ type_pub }}">
+                                       {{ num }}
+                                    </a>
+                                </li>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+
+                        <!-- Dernière page -->
+                        {% if marches.number < marches.paginator.num_pages|add:"-2" %}
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ marches.paginator.num_pages }}&search={{ search }}&statut={{ statut }}&type={{ type_pub }}">
+                                {{ marches.paginator.num_pages }}
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        <!-- Suivant -->
+                        {% if marches.has_next %}
+                        <li class="page-item">
+                            <a class="page-link"
+                               href="?page={{ marches.next_page_number }}&search={{ search }}&statut={{ statut }}&type={{ type_pub }}">
+                                Suivant <i class="fas fa-chevron-right ms-1"></i>
+                            </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">Suivant <i class="fas fa-chevron-right ms-1"></i></span>
+                        </li>
+                        {% endif %}
+
+                    </ul>
+                    <div class="text-center text-muted mt-2">
+                        Page {{ marches.number }} sur {{ marches.paginator.num_pages }}
+                    </div>
+                </nav>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Footer info -->
+        <div class="text-center mt-4 text-muted">
+            <p class="mb-0">
+                <i class="fas fa-info-circle me-1"></i> 
+                Pour plus d'informations sur un marché, cliquez sur le bouton "Détails"
+            </p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Animation pour les lignes du tableau
+        document.addEventListener('DOMContentLoaded', function() {
+            const tableRows = document.querySelectorAll('.table-custom tbody tr');
+            tableRows.forEach((row, index) => {
+                row.style.opacity = '0';
+                row.style.transform = 'translateY(10px)';
+                
+                setTimeout(() => {
+                    row.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+                    row.style.opacity = '1';
+                    row.style.transform = 'translateY(0)';
+                }, index * 50);
+            });
+            
+            // Tooltip pour les titres tronqués
+            const truncatedTitles = document.querySelectorAll('.fw-medium');
+            truncatedTitles.forEach(title => {
+                if (title.textContent.length > 40) {
+                    title.setAttribute('data-bs-toggle', 'tooltip');
+                    title.setAttribute('data-bs-placement', 'top');
+                    title.setAttribute('title', title.nextElementSibling.textContent);
+                }
+            });
+            
+            // Initialiser les tooltips Bootstrap
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+    </script>
+</body>
+</html>
