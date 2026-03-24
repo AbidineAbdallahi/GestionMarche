@@ -1,0 +1,39 @@
+services:
+
+  django:
+    image: moonsarlmr/gestion_marches:1.0
+    container_name: django_app
+    volumes:
+      - ./docs_marche:/docs_marche  
+    ports:
+      - "8080:8000"
+    depends_on:
+      - db
+    environment:
+      - DOCKER=1
+
+  db:
+    image: mysql:8
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_DATABASE: marches_db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: 36298932
+      MYSQL_ROOT_PASSWORD: 36298932
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./db_dump.sql:/docker-entrypoint-initdb.d/db_dump.sql
+
+  docs_server:
+    image: python:3.10
+    container_name: docs_server
+    working_dir: /app
+    command: python -m http.server 8000
+    volumes:
+      - ./docs_marche:/app   
+    ports:
+      - "8081:8000"
+
+volumes:
+  mysql_data:

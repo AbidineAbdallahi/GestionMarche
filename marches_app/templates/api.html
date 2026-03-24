@@ -1,0 +1,500 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Marchés Publics | Tableau de Bord</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Bootstrap 5 -->
+    <link href="{% static 'assets/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link href="{% static 'assets/fonts/fontawesome/css/all.min.css' %}" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #eef2ff;
+            --secondary: #7209b7;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --dark: #2d3748;
+            --light: #f8fafc;
+            --border: #e2e8f0;
+        }
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding-top: 1rem;
+            padding-bottom: 2rem;
+        }
+        
+        .dashboard-header {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .dashboard-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+        
+        .stats-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        
+        .status-badge {
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        
+        .status-pending { 
+            background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
+            color: #5c4b00;
+        }
+        
+        .status-validated { 
+            background: linear-gradient(135deg, #55efc4, #00b894);
+            color: #003d29;
+        }
+        
+        .status-rejected { 
+            background: linear-gradient(135deg, #fab1a0, #e17055);
+            color: #5c0000;
+        }
+        
+        .type-badge {
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid rgba(67, 97, 238, 0.2);
+        }
+        
+        .table-container {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border: 1px solid var(--border);
+        }
+        
+        .table-header {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1.5rem;
+        }
+        
+        .table-custom {
+            margin: 0;
+        }
+        
+        .table-custom thead th {
+            background: #f8fafc;
+            color: var(--dark);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+            padding: 1.2rem 1rem;
+            border-bottom: 2px solid var(--border);
+            text-align: center;
+        }
+        
+        .table-custom tbody td {
+            padding: 1.2rem 1rem;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+            text-align: center;
+        }
+        
+        .table-custom tbody tr {
+            transition: all 0.2s ease;
+        }
+        
+        .table-custom tbody tr:hover {
+            background-color: #f8fafc;
+            transform: scale(1.001);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .montant-cell {
+            font-weight: 700;
+            color: var(--dark);
+            font-size: 1.1em;
+        }
+        
+        .empty-state {
+            padding: 4rem 2rem;
+            text-align: center;
+            color: #718096;
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+        
+        .pagination-custom .page-link {
+            border: none;
+            color: var(--primary);
+            padding: 0.5rem 1rem;
+            margin: 0 0.25rem;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+        
+        .pagination-custom .page-item.active .page-link {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+        
+        .pagination-custom .page-link:hover {
+            background: var(--primary-light);
+        }
+        
+        .search-box {
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .search-box:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        }
+        
+        .search-box input {
+            border: none;
+            outline: none;
+            width: 100%;
+            padding: 0.25rem;
+        }
+        
+        @media (max-width: 768px) {
+            .table-custom thead {
+                display: none;
+            }
+            
+            .table-custom tbody tr {
+                display: block;
+                margin-bottom: 1rem;
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                padding: 1rem;
+            }
+            
+            .table-custom tbody td {
+                display: block;
+                text-align: right;
+                padding: 0.5rem;
+                border: none;
+            }
+            
+            .table-custom tbody td::before {
+                content: attr(data-label);
+                float: left;
+                font-weight: 600;
+                color: var(--dark);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container-xl">
+
+    <!-- Header avec statistiques -->
+    <div class="dashboard-header">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="display-6 fw-bold mb-2" style="color: var(--dark);">
+                    <i class="fas fa-file-contract me-2" style="color: var(--primary);"></i>
+                    Marchés Publics
+                </h1>
+                <p class="text-muted mb-0">Gestion et consultation des appels d'offres publics</p>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <div class="d-inline-block p-3 rounded-3" style="background: var(--primary-light);">
+                    <div class="d-flex align-items-center">
+                        <div class="me-3">
+                            <i class="fas fa-chart-bar fa-2x" style="color: var(--primary);"></i>
+                        </div>
+                        <div>
+                            <h3 class="mb-0 fw-bold">{{ marches|length }}</h3>
+                            <small class="text-muted">Total des marchés</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistiques rapides -->
+    <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+            <div class="stats-card">
+                <div class="d-flex align-items-center">
+                    <div class="me-3">
+                        <i class="fas fa-clock fa-2x" style="color: #f39c12;"></i>
+                    </div>
+                    <div>
+                        <h4 class="mb-0 fw-bold">{{ marches_pending|default:"0" }}</h4>
+                        <small class="text-muted">En attente</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="stats-card">
+                <div class="d-flex align-items-center">
+                    <div class="me-3">
+                        <i class="fas fa-check-circle fa-2x" style="color: var(--success);"></i>
+                    </div>
+                    <div>
+                        <h4 class="mb-0 fw-bold">{{ marches_validated|default:"0" }}</h4>
+                        <small class="text-muted">Validés</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="stats-card">
+                <div class="d-flex align-items-center">
+                    <div class="me-3">
+                        <i class="fas fa-ban fa-2x" style="color: var(--danger);"></i>
+                    </div>
+                    <div>
+                        <h4 class="mb-0 fw-bold">{{ marches_rejected|default:"0" }}</h4>
+                        <small class="text-muted">Rejetés</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tableau principal -->
+    <div class="table-container">
+        <div class="table-header">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h5 class="mb-0"><i class="fas fa-list me-2"></i>Liste des marchés</h5>
+                </div>
+                <div class="col-md-6">
+                    <div class="search-box">
+                        <div class="input-group">
+                            <span class="input-group-text border-0 bg-transparent">
+                                <i class="fas fa-search"></i>
+                            </span>
+                            <input type="text" class="form-control border-0" placeholder="Rechercher un marché...">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="table-responsive">
+            <table class="table table-custom">
+                <thead>
+                    <tr>
+                        <th width="5%">#</th>
+                        <th width="25%">Titre du Marché</th>
+                        <th width="20%">Autorité Contractante</th>
+                        <th width="10%">Type</th>
+                        <th width="15%">Montant</th>
+                        <th width="15%">Date Publication</th>
+                        <th width="10%">Statut</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for m in marches %}
+                    <tr>
+                        <td data-label="ID">
+                            <span class="badge bg-light text-dark">#{{ m.id }}</span>
+                        </td>
+                        <td data-label="Titre" class="text-start">
+                            <div>
+                                <a href="{% url 'marche_detail' m.id %}" class="text-decoration-none">
+    <strong class="d-block text-primary">
+        {{ m.titre|truncatechars:50 }}
+    </strong>
+</a>
+                                <small class="text-muted">{{ m.reference|default:"Sans référence" }}</small>
+                            </div>
+                        </td>
+                        <td data-label="Autorité">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-building me-2 text-muted"></i>
+                                <span>{{ m.autoriteContractante|truncatechars:30 }}</span>
+                            </div>
+                        </td>
+                        <td data-label="Type">
+                            <span class="type-badge">
+                                <i class="fas fa-tag me-1"></i>
+                                {{ m.typePublication }}
+                            </span>
+                        </td>
+                        <td data-label="Montant" class="montant-cell">
+                            {{ m.montant|floatformat:0 }} <small>MRU</small>
+                        </td>
+                        <td data-label="Publication">
+                            <div class="d-flex flex-column">
+                                <span class="fw-medium">{{ m.datePublication|date:"d/m/Y" }}</span>
+                                <small class="text-muted">{{ m.datePublication|date:"H:i" }}</small>
+                            </div>
+                        </td>
+                        <td data-label="Statut">
+                            {% if m.status == "PENDING" %}
+                                <span class="status-badge status-pending">
+                                    <i class="fas fa-clock"></i> Attente
+                                </span>
+                            {% elif m.status == "VALIDATED" %}
+                                <span class="status-badge status-validated">
+                                    <i class="fas fa-check"></i> Validé
+                                </span>
+                            {% elif m.status == "REJECTED" %}
+                                <span class="status-badge status-rejected">
+                                    <i class="fas fa-ban"></i> Rejeté
+                                </span>
+                            {% else %}
+                                <span class="status-badge">{{ m.status }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <i class="fas fa-inbox"></i>
+                                <h4 class="mt-3 mb-2">Aucun marché trouvé</h4>
+                                <p class="text-muted">Il n'y a actuellement aucun marché public à afficher.</p>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    {% if total_pages > 1 %}
+    <div class="mt-4">
+        <nav aria-label="Navigation des pages">
+            <ul class="pagination pagination-custom justify-content-center">
+                {% if page > 0 %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page|add:'-1' }}">
+                        <i class="fas fa-chevron-left me-1"></i> Précédent
+                    </a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">
+                        <i class="fas fa-chevron-left me-1"></i> Précédent
+                    </span>
+                </li>
+                {% endif %}
+
+                {% for i in total_pages|make_list %}
+                <li class="page-item {% if page == forloop.counter0 %}active{% endif %}">
+                    <a class="page-link" href="?page={{ forloop.counter0 }}">{{ forloop.counter }}</a>
+                </li>
+                {% endfor %}
+
+                {% if page < total_pages|add:'-1' %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page|add:'1' }}">
+                        Suivant <i class="fas fa-chevron-right ms-1"></i>
+                    </a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">
+                        Suivant <i class="fas fa-chevron-right ms-1"></i>
+                    </span>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    {% endif %}
+
+</div>
+
+<script src="{% static 'assets/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+<script>
+    // Fonction de recherche simple
+    document.querySelector('.search-box input').addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase();
+        const rows = document.querySelectorAll('tbody tr');
+        
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            if (text.includes(searchTerm)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+    
+    // Animation au survol des lignes
+    document.addEventListener('DOMContentLoaded', function() {
+        const rows = document.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+            row.addEventListener('mouseenter', function() {
+                this.style.transition = 'all 0.2s ease';
+            });
+        });
+    });
+</script>
+
+</body>
+</html>

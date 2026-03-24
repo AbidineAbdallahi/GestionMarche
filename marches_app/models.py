@@ -1,7 +1,51 @@
 # models.py
 from django.db import models
+from django.db import models
 
 
+class Attributaire(models.Model):
+    nom = models.CharField(max_length=255)
+    nif = models.CharField(max_length=100, blank=True, null=True, unique=True)
+    telephone = models.JSONField(blank=True, null=True)
+    email = models.EmailField(blank=True, null=True)
+    adresse = models.TextField(blank=True, null=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.nom
+class Attribution(models.Model):
+
+    marche = models.ForeignKey(
+        'Marche',
+        on_delete=models.CASCADE,
+        related_name='attributions'
+    )
+
+    attributaire = models.ForeignKey(
+        Attributaire,
+        on_delete=models.CASCADE,
+        related_name='attributions'
+    )
+
+    fichier_source = models.CharField(max_length=255)
+
+    montant = models.DecimalField(
+        max_digits=18,
+        decimal_places=2,
+        blank=True,
+        null=True
+    )
+
+    devise = models.CharField(max_length=10, default="MRU")
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("marche", "attributaire", "fichier_source")
+
+    def __str__(self):
+        return f"{self.marche.id} - {self.attributaire.nom}"
 
 class PpmMarche(models.Model):
     reference_ppm = models.CharField(max_length=100)
@@ -45,10 +89,13 @@ class Marche(models.Model):
     type_publication = models.CharField(max_length=255, blank=True, null=True)
     statut = models.CharField(max_length=255, blank=True, null=True)
     date_publication = models.DateField(blank=True, null=True)
-    date_debut = models.DateField(blank=True, null=True)
-    date_fin = models.DateField(blank=True, null=True)
-    montant = models.CharField(max_length=255, blank=True, null=True)
-    updated_at = models.DateField(blank=True, null=True)
+    date_debut = models.DateField(null=True, blank=True)
+    date_fin = models.DateField(null=True, blank=True)
+    montant = models.CharField(max_length=255, null=True, blank=True)
+    updated_at = models.DateField(null=True, blank=True)
+
+    def __str__(self):
+        return self.id
 
 class Document(models.Model):
     marche = models.ForeignKey(Marche, on_delete=models.CASCADE, related_name='documents')

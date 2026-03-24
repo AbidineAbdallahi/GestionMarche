@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Attributions définitives</title>
+
+<style>
+:root {
+    --primary:#3a86ff;
+    --primary-dark:#2667cc;
+    --success:#2dc653;
+    --dark:#212529;
+    --gray:#6c757d;
+    --light:#f8f9fa;
+    --border:#dee2e6;
+    --radius:8px;
+}
+
+body{
+    font-family:Segoe UI, sans-serif;
+    background:#f5f7fb;
+    padding:30px;
+}
+
+.container{
+    max-width:1200px;
+    margin:auto;
+}
+
+h1{
+    margin-bottom:25px;
+}
+
+.card{
+    background:white;
+    border-radius:var(--radius);
+    box-shadow:0 5px 20px rgba(0,0,0,0.05);
+    padding:25px;
+}
+
+.filters{
+    display:flex;
+    gap:15px;
+    flex-wrap:wrap;
+    margin-bottom:20px;
+}
+
+input{
+    padding:10px 14px;
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+}
+
+button{
+    padding:10px 20px;
+    background:var(--primary);
+    color:white;
+    border:none;
+    border-radius:var(--radius);
+    cursor:pointer;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:15px;
+}
+
+thead{
+    background:#eef4ff;
+}
+
+th,td{
+    padding:14px;
+    border-bottom:1px solid var(--border);
+    text-align:left;
+}
+
+tr:hover{
+    background:#f9fbff;
+}
+
+.montant{
+    color:var(--success);
+    font-weight:bold;
+}
+
+.pagination{
+    margin-top:20px;
+    display:flex;
+    justify-content:center;
+    gap:10px;
+}
+
+.pagination a,
+.pagination span{
+    padding:8px 14px;
+    border-radius:var(--radius);
+    text-decoration:none;
+    font-weight:600;
+}
+
+.pagination a{
+    background:var(--light);
+    color:var(--dark);
+}
+
+.pagination a:hover{
+    background:var(--primary);
+    color:white;
+}
+
+.current{
+    background:var(--primary);
+    color:white;
+}
+
+.empty{
+    text-align:center;
+    padding:30px;
+    color:var(--gray);
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Attributions définitives</h1>
+
+<div class="card">
+
+<form method="get" class="filters">
+    <input type="text" name="search" placeholder="Recherche entreprise ou marché"
+           value="{{ search }}">
+    <input type="text" name="marche" placeholder="ID Marché"
+           value="{{ marche_id }}">
+    <button type="submit">Filtrer</button>
+</form>
+
+<table>
+<thead>
+<tr>
+    <th>ID Marché</th>
+  
+    <th>Entreprise</th>
+    <th>Montant</th>
+     <th>Devise</th>
+    <th>date_creation</th>
+    <th>Source</th>
+</tr>
+</thead>
+
+<tbody>
+{% for a in attributions %}
+<tr>
+    <td>
+        <a href="{% url 'marche_detail' a.marche.id %}">
+            {{ a.marche.id }}
+        </a>
+    </td>
+
+    
+
+    <td>
+        <strong>{{ a.attributaire.nom }}</strong><br>
+        <small>NIF : {{ a.attributaire.nif|default:"—" }}</small><br>
+        <small>Tel : {{ a.attributaire.telephone|default:"—" }}</small>
+    </td>
+
+    <td class="montant">
+        {% if a.montant %}
+            {{ a.montant|floatformat:2 }} {{ a.devise }}
+        {% else %}
+            —
+        {% endif %}
+    </td>
+     <td>
+        {{ a.devise}}
+    </td>
+
+    <td>
+        {{ a.created_at|date:"d/m/Y" }}
+    </td>
+
+    <td>
+        {% if a.fichier_source %}
+            {{ a.fichier_source }}
+        {% else %}
+            —
+        {% endif %}
+    </td>
+</tr>
+{% empty %}
+<tr>
+    <td colspan="6">
+        <div class="empty">
+            Aucune attribution trouvée.
+        </div>
+    </td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+<!-- Pagination -->
+
+<div class="pagination">
+
+{% if page_obj.has_previous %}
+<a href="?page={{ page_obj.previous_page_number }}&search={{ search }}&marche={{ marche_id }}">
+Précédent
+</a>
+{% endif %}
+
+<span class="current">
+Page {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+</span>
+
+{% if page_obj.has_next %}
+<a href="?page={{ page_obj.next_page_number }}&search={{ search }}&marche={{ marche_id }}">
+Suivant
+</a>
+{% endif %}
+
+</div>
+
+</div>
+</div>
+
+</body>
+</html>

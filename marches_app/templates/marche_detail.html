@@ -1,0 +1,92 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>{{ marche.titre }}</title>
+
+<link href="{% static 'assets/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+<link href="{% static 'assets/fonts/fontawesome/css/all.min.css' %}" rel="stylesheet">
+
+<style>
+body{background:#f5f7fb;}
+.header{
+    background:linear-gradient(135deg,#4361ee,#3a0ca3);
+    color:white;
+    padding:40px 0;
+    margin-bottom:40px;
+}
+.doc-card{
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 5px 20px rgba(0,0,0,0.05);
+}
+.doc-item{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:15px;
+    border:1px solid #e9ecef;
+    border-radius:10px;
+    margin-bottom:12px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header text-center">
+    <div class="container">
+        <h2>{{ marche.titre }}</h2>
+        <p>ID Marché : <strong>#{{ marche.id }}</strong></p>
+    </div>
+</div>
+
+<div class="container">
+
+{% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+{% else %}
+
+<div class="doc-card">
+
+<h4 class="mb-4">
+<i class="fas fa-folder-open text-primary me-2"></i>
+Documents associés ({{ documents|length }})
+</h4>
+
+{% for doc in documents %}
+<div class="doc-item">
+    <div>
+        <i class="fas fa-file me-2"></i>
+        {{ doc.titre }}
+    </div>
+
+    {% if doc.urlFichier %}
+        <a href="{{ doc.urlFichier }}" target="_blank"
+           class="btn btn-sm btn-primary">
+           <i class="fas fa-eye me-1"></i> Ouvrir
+        </a>
+    {% else %}
+        <span class="text-muted">Lien indisponible</span>
+    {% endif %}
+</div>
+{% empty %}
+<div class="text-muted">
+    Aucun document associé.
+</div>
+{% endfor %}
+
+</div>
+
+<a href="{% url 'marche_list' %}" class="btn btn-outline-primary mt-4">
+    <i class="fas fa-arrow-left me-2"></i> Retour
+</a>
+
+{% endif %}
+
+</div>
+
+</body>
+</html>

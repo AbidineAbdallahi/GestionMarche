@@ -72,6 +72,14 @@ WSGI_APPLICATION = 'gestion_marches.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+import os
+if os.getenv("DOCKER") == "1":
+    DB_HOST = "db"
+    DB_USER = "user"
+else:
+    DB_HOST = "localhost"
+    DB_USER = "root"
+
 
 DATABASES = {
     'default': {
@@ -132,12 +140,18 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # settings.py
 
 import os
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# MEDIA_URL = '/media/'
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 import os
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+#BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+FILES_HTTP_BASE_URL = "http://localhost:8081/"
+import pymysql
+pymysql.install_as_MySQLdb()
+# Chemin disque réel (utilisé uniquement dans les views)
+#DOCS_MARCHE_ROOT = r"C:\Users\abidi\Desktop\ExtractionDonne\docs_marche"
+DOCS_MARCHE_ROOT = "/docs_marche"
+#DOCS_MARCHE_ROOT = os.path.join(BASE_DIR, "docs_marche")
 MEDIA_URL = '/media/'
-MEDIA_ROOT = r'C:\Users\abidi\Desktop\ExtractionDonne\docs_marche'  # chemin absolu vers ton dossier docs_marche
+#MEDIA_ROOT = r'C:\Users\abidi\Desktop\ExtractionDonne\docs_marche'  # chemin absolu vers ton dossier docs_marche

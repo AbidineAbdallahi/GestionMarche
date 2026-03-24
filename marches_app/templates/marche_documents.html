@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Documents du marché</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+<div class="container mt-5">
+
+{% if error %}
+<div class="alert alert-danger">{{ error }}</div>
+{% else %}
+
+<h3 class="mb-4">
+<i class="fas fa-folder-open text-primary me-2"></i>
+Documents du marché : {{ marche.titre }}
+</h3>
+
+<div class="card p-4 shadow-sm">
+
+{% for doc in documents %}
+<div class="d-flex justify-content-between align-items-center border-bottom py-3">
+
+    <div>
+        <i class="fas fa-file me-2 text-primary"></i>
+        <strong>{{ doc.titre }}</strong>
+    </div>
+
+    {% if doc.urlFichier %}
+    <a href="{{ doc.urlFichier }}" target="_blank" class="btn btn-sm btn-primary">
+        <i class="fas fa-download me-1"></i> Télécharger
+    </a>
+    {% endif %}
+
+</div>
+{% empty %}
+<div class="text-center py-4 text-muted">
+    Aucun document associé à ce marché.
+</div>
+{% endfor %}
+
+</div>
+
+<a href="{% url 'marche_list' %}" class="btn btn-outline-primary mt-4">
+<i class="fas fa-arrow-left me-2"></i>Retour
+</a>
+
+{% endif %}
+
+</div>
+
+</body>
+</html>
