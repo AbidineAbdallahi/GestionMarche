@@ -28,8 +28,30 @@ body{
     margin:auto;
 }
 
-h1{
+.top-bar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
     margin-bottom:25px;
+    flex-wrap:wrap;
+    gap:10px;
+}
+
+h1{
+    margin:0;
+}
+
+.back-btn{
+    padding:10px 18px;
+    background:#6c757d;
+    color:white;
+    text-decoration:none;
+    border-radius:var(--radius);
+    font-weight:600;
+}
+
+.back-btn:hover{
+    background:#495057;
 }
 
 .card{
@@ -128,7 +150,14 @@ tr:hover{
 
 <div class="container">
 
-<h1>Attributions définitives</h1>
+<div class="top-bar">
+    <h1>Attributions définitives</h1>
+
+    <!-- BOUTON RETOUR -->
+    <a href="{% url 'marche_list' %}" class="back-btn">
+        ← Retour Liste Marchés
+    </a>
+</div>
 
 <div class="card">
 
@@ -144,11 +173,10 @@ tr:hover{
 <thead>
 <tr>
     <th>ID Marché</th>
-  
     <th>Entreprise</th>
     <th>Montant</th>
-     <th>Devise</th>
-    <th>date_creation</th>
+    <th>Devise</th>
+    <th>Date création</th>
     <th>Source</th>
 </tr>
 </thead>
@@ -161,8 +189,6 @@ tr:hover{
             {{ a.marche.id }}
         </a>
     </td>
-
-    
 
     <td>
         <strong>{{ a.attributaire.nom }}</strong><br>
@@ -177,13 +203,10 @@ tr:hover{
             —
         {% endif %}
     </td>
-     <td>
-        {{ a.devise}}
-    </td>
 
-    <td>
-        {{ a.created_at|date:"d/m/Y" }}
-    </td>
+    <td>{{ a.devise }}</td>
+
+    <td>{{ a.created_at|date:"d/m/Y" }}</td>
 
     <td>
         {% if a.fichier_source %}
@@ -204,8 +227,6 @@ tr:hover{
 {% endfor %}
 </tbody>
 </table>
-
-<!-- Pagination -->
 
 <div class="pagination">
 

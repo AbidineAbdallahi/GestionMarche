@@ -6,521 +6,615 @@
     <title>{{ marche.titre }} | Détails du marché</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary-color: #4361ee;
-            --primary-light: #eef2ff;
-            --secondary-color: #3a0ca3;
-            --accent-color: #4cc9f0;
-            --success-color: #2ec4b6;
-            --warning-color: #ff9f1c;
-            --danger-color: #e71d36;
-            --light-color: #f8f9fa;
-            --dark-color: #1a1d28;
-            --gray-color: #6c757d;
-            --border-color: #e1e5f1;
-            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-            --hover-shadow: 0 15px 40px rgba(67, 97, 238, 0.15);
-            --gradient-primary: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
-        }
-        
         * {
-            font-family: 'Inter', 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        
+
         body {
-            background: linear-gradient(135deg, #f5f7ff 0%, #f0f2ff 100%);
-            color: var(--dark-color);
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(145deg, #f8fafc 0%, #eef2ff 100%);
             min-height: 100vh;
-            padding-bottom: 40px;
+            color: #0f172a;
         }
-        
-        .header-gradient {
-            background: var(--gradient-primary);
-            color: white;
-            padding: 40px 0 30px;
-            margin-bottom: 40px;
-            border-radius: 0 0 25px 25px;
-            box-shadow: 0 10px 30px rgba(67, 97, 238, 0.25);
+
+        /* Glassmorphism & Modern Effects */
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        /* Hero Section Premium */
+        .hero-premium {
+            background: linear-gradient(115deg, #0f172a 0%, #1e293b 35%, #2d3a5e 100%);
             position: relative;
             overflow: hidden;
+            padding: 2.5rem 0 3.5rem 0;
+            border-radius: 0 0 2.5rem 2.5rem;
         }
-        
-        .header-gradient::before {
+
+        .hero-premium::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 5px;
-            background: linear-gradient(90deg, #4cc9f0, #2ec4b6, #ff9f1c);
+            top: -30%;
+            right: -15%;
+            width: 70%;
+            height: 160%;
+            background: radial-gradient(circle, rgba(99,102,241,0.25) 0%, transparent 70%);
+            transform: rotate(20deg);
+            pointer-events: none;
         }
-        
-        .page-title {
-            font-family: 'Poppins', sans-serif;
-            font-weight: 700;
-            font-size: 2.2rem;
-            margin-bottom: 10px;
-            line-height: 1.3;
+
+        .hero-premium::after {
+            content: '';
+            position: absolute;
+            bottom: -20%;
+            left: -10%;
+            width: 60%;
+            height: 140%;
+            background: radial-gradient(circle, rgba(168,85,247,0.15) 0%, transparent 70%);
+            transform: rotate(-15deg);
+            pointer-events: none;
         }
-        
-        .page-subtitle {
-            opacity: 0.9;
-            font-weight: 300;
-            font-size: 1.1rem;
-            max-width: 800px;
+
+        .hero-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, rgba(99,102,241,0.1) 0%, transparent 70%);
+            pointer-events: none;
         }
-        
-        .info-card {
+
+        .breadcrumb-custom {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(8px);
+            display: inline-flex;
+            padding: 0.5rem 1.2rem;
+            border-radius: 100px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .breadcrumb-custom .breadcrumb-item a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .breadcrumb-custom .breadcrumb-item a:hover {
+            color: white;
+        }
+
+        .breadcrumb-custom .breadcrumb-item.active {
+            color: white;
+        }
+
+        /* Stats Cards */
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            border-radius: 1.5rem;
+            padding: 1rem 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
             background: white;
-            border-radius: 20px;
-            padding: 0;
-            margin-bottom: 30px;
-            box-shadow: var(--card-shadow);
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Main Content Cards */
+        .card-premium {
+            background: white;
+            border-radius: 1.75rem;
             border: none;
+            box-shadow: 0 10px 35px -12px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
             overflow: hidden;
-            transition: transform 0.3s, box-shadow 0.3s;
         }
-        
-        .info-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--hover-shadow);
+
+        .card-premium:hover {
+            box-shadow: 0 20px 45px -15px rgba(0, 0, 0, 0.12);
+            transform: translateY(-2px);
         }
-        
-        .card-header-custom {
-            background: linear-gradient(to right, #f8f9fa, #eef2ff);
-            border-bottom: 1px solid var(--border-color);
-            padding: 25px 30px;
-            border-radius: 20px 20px 0 0;
+
+        .card-header-premium {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #e2e8f0;
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            flex-wrap: wrap;
-        }
-        
-        .card-header-custom h3 {
-            font-family: 'Poppins', sans-serif;
-            font-weight: 600;
-            color: var(--secondary-color);
-            margin: 0;
-            display: flex;
             align-items: center;
-            gap: 12px;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
-        
-        .status-badge {
-            padding: 8px 18px;
-            border-radius: 50px;
-            font-size: 0.9rem;
-            font-weight: 600;
+
+        .card-header-premium h3 {
+            font-weight: 700;
+            font-size: 1.4rem;
+            margin: 0;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* Status Badges Modern */
+        .badge-modern {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-        }
-        
-        .status-ouvert {
-            background-color: rgba(46, 196, 182, 0.15);
-            color: var(--success-color);
-            border: 1px solid rgba(46, 196, 182, 0.3);
-        }
-        
-        .status-cloture {
-            background-color: rgba(231, 29, 54, 0.1);
-            color: var(--danger-color);
-            border: 1px solid rgba(231, 29, 54, 0.2);
-        }
-        
-        .status-annule {
-            background-color: rgba(108, 117, 125, 0.15);
-            color: var(--gray-color);
-            border: 1px solid rgba(108, 117, 125, 0.3);
-        }
-        
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 25px;
-            padding: 30px;
-        }
-        
-        .info-item {
-            padding: 15px 0;
-            border-bottom: 1px dashed var(--border-color);
-        }
-        
-        .info-item:last-child {
-            border-bottom: none;
-        }
-        
-        .info-label {
+            gap: 0.5rem;
+            padding: 0.5rem 1.25rem;
+            border-radius: 100px;
             font-weight: 600;
-            color: var(--secondary-color);
-            margin-bottom: 8px;
+            font-size: 0.85rem;
+            letter-spacing: 0.3px;
+        }
+
+        .badge-open { background: linear-gradient(135deg, #10b981, #059669); color: white; box-shadow: 0 4px 12px rgba(16,185,129,0.3); }
+        .badge-closed { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; box-shadow: 0 4px 12px rgba(239,68,68,0.3); }
+        .badge-pending { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; box-shadow: 0 4px 12px rgba(245,158,11,0.3); }
+        .badge-validated { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; box-shadow: 0 4px 12px rgba(59,130,246,0.3); }
+        .badge-rejected { background: linear-gradient(135deg, #6b7280, #4b5563); color: white; box-shadow: 0 4px 12px rgba(107,114,128,0.3); }
+
+        /* Info Grid */
+        .info-grid-modern {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            padding: 2rem;
+        }
+
+        .info-card-item {
+            background: #f8fafc;
+            border-radius: 1.25rem;
+            padding: 1.25rem;
+            transition: all 0.3s;
+            border: 1px solid #e2e8f0;
+        }
+
+        .info-card-item:hover {
+            background: white;
+            border-color: #c7d2fe;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px -8px rgba(79,70,229,0.15);
+        }
+
+        .info-label-modern {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            color: #64748b;
+            margin-bottom: 0.5rem;
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-size: 0.95rem;
+            gap: 0.5rem;
         }
-        
-        .info-value {
+
+        .info-value-modern {
             font-size: 1.1rem;
-            color: var(--dark-color);
-            font-weight: 500;
+            font-weight: 600;
+            color: #0f172a;
         }
-        
-        .montant-value {
+
+        .amount-value {
             font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            font-family: 'Poppins', sans-serif;
+            font-weight: 800;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
-        
-        .documents-card {
-            background: white;
-            border-radius: 20px;
-            padding: 0;
-            margin-bottom: 40px;
-            box-shadow: var(--card-shadow);
-            border: none;
-            overflow: hidden;
+
+        .highlight-card {
+            background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+            border: 1px solid #c7d2fe;
         }
-        
-        .documents-list {
-            padding: 25px;
+
+        /* Documents Section */
+        .doc-list {
+            padding: 1.5rem 2rem 2rem;
         }
-        
-        .document-item {
+
+        .doc-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 20px;
-            margin-bottom: 15px;
-            background: var(--light-color);
-            border-radius: 15px;
-            border: 1px solid var(--border-color);
+            padding: 1.2rem;
+            background: #f8fafc;
+            border-radius: 1rem;
+            margin-bottom: 1rem;
             transition: all 0.3s;
+            border: 1px solid #e2e8f0;
         }
-        
-        .document-item:hover {
+
+        .doc-item:hover {
             background: white;
-            border-color: var(--primary-color);
-            transform: translateX(5px);
-            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.1);
+            border-color: #818cf8;
+            transform: translateX(6px);
+            box-shadow: 0 5px 15px rgba(79,70,229,0.1);
         }
-        
-        .document-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            flex: 1;
-        }
-        
-        .document-icon {
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, var(--primary-light), white);
-            border-radius: 12px;
+
+        .doc-icon-wrapper {
+            width: 52px;
+            height: 52px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--primary-color);
+            color: white;
             font-size: 1.5rem;
-            border: 1px solid var(--border-color);
+            box-shadow: 0 5px 12px rgba(79,70,229,0.25);
         }
-        
-        .document-name {
-            font-weight: 500;
-            color: var(--dark-color);
-            margin-bottom: 5px;
-        }
-        
-        .document-type {
-            font-size: 0.85rem;
-            color: var(--gray-color);
-            background: rgba(108, 117, 125, 0.1);
-            padding: 3px 10px;
-            border-radius: 20px;
-            display: inline-block;
-        }
-        
-        .btn-download {
-            background: var(--primary-color);
+
+        .btn-download-premium {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
             color: white;
             border: none;
-            border-radius: 10px;
-            padding: 10px 20px;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: all 0.3s;
-        }
-        
-        .btn-download:hover {
-            background: var(--secondary-color);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
-            color: white;
-        }
-        
-        .btn-back {
-            background: white;
-            color: var(--primary-color);
-            border: 2px solid var(--primary-color);
             border-radius: 12px;
-            padding: 12px 25px;
+            padding: 0.6rem 1.5rem;
             font-weight: 500;
+            transition: all 0.3s;
+            text-decoration: none;
             display: inline-flex;
             align-items: center;
-            gap: 10px;
+            gap: 0.5rem;
+        }
+
+        .btn-download-premium:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(79,70,229,0.35);
+            color: white;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .btn-back-premium {
+            background: white;
+            color: #4f46e5;
+            border: 2px solid #4f46e5;
+            border-radius: 14px;
+            padding: 0.75rem 1.8rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .btn-back-premium:hover {
+            background: #4f46e5;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(79,70,229,0.3);
+        }
+
+        .btn-primary-premium {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
             transition: all 0.3s;
             text-decoration: none;
         }
-        
-        .btn-back:hover {
-            background: var(--primary-color);
-            color: white;
+
+        .btn-primary-premium:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.2);
+            box-shadow: 0 8px 20px rgba(79,70,229,0.4);
+            color: white;
         }
-        
-        .empty-documents {
-            padding: 40px 20px;
+
+        .btn-outline-premium {
+            background: transparent;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 0.7rem 1.3rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            color: #475569;
+        }
+
+        .btn-outline-premium:hover {
+            border-color: #4f46e5;
+            color: #4f46e5;
+            transform: translateY(-1px);
+        }
+
+        /* Empty State */
+        .empty-state-premium {
             text-align: center;
-            color: var(--gray-color);
+            padding: 3rem;
+            background: #f8fafc;
+            border-radius: 1rem;
         }
-        
-        .empty-documents i {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            color: #e1e5f1;
+
+        /* Animations */
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        
-        .metadata {
-            display: flex;
-            gap: 15px;
-            margin-top: 10px;
-            flex-wrap: wrap;
+
+        .animate-up {
+            animation: slideUp 0.5s ease forwards;
         }
-        
-        .metadata-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--gray-color);
-            font-size: 0.9rem;
-        }
-        
-        .date-highlight {
-            background: linear-gradient(135deg, rgba(67, 97, 238, 0.1), rgba(76, 201, 240, 0.1));
-            padding: 12px 20px;
-            border-radius: 12px;
-            border-left: 4px solid var(--primary-color);
-        }
-        
+
+        /* Responsive */
         @media (max-width: 768px) {
-            .header-gradient {
-                padding: 30px 0 25px;
-                border-radius: 0 0 20px 20px;
+            .hero-premium {
+                padding: 1.5rem 0 2.5rem 0;
+                border-radius: 0 0 1.5rem 1.5rem;
             }
-            
-            .page-title {
-                font-size: 1.8rem;
+
+            .info-grid-modern {
+                padding: 1rem;
+                gap: 1rem;
             }
-            
-            .info-grid {
-                grid-template-columns: 1fr;
-                padding: 20px;
-                gap: 15px;
+
+            .card-header-premium {
+                padding: 1rem 1.2rem;
             }
-            
-            .card-header-custom {
-                padding: 20px;
-            }
-            
-            .document-item {
+
+            .doc-item {
                 flex-direction: column;
+                gap: 1rem;
                 align-items: flex-start;
-                gap: 15px;
             }
-            
-            .document-info {
-                width: 100%;
-            }
-            
-            .btn-download {
+
+            .btn-download-premium {
                 width: 100%;
                 justify-content: center;
+            }
+
+            .action-buttons {
+                justify-content: center;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            .hero-premium, .action-buttons, .btn-download-premium {
+                display: none;
+            }
+            body {
+                background: white;
+            }
+            .card-premium {
+                box-shadow: none;
+                break-inside: avoid;
             }
         }
     </style>
 </head>
 <body>
-    <!-- En-tête -->
-    <div class="header-gradient">
+    <!-- Hero Section Premium -->
+    <div class="hero-premium">
+        <div class="hero-glow"></div>
         <div class="container">
-            <nav aria-label="breadcrumb" class="mb-3">
-                <ol class="breadcrumb" style="background: transparent; padding: 0;">
-                    <li class="breadcrumb-item"><a href="{% url 'marche_list' %}" style="color: rgba(255,255,255,0.8); text-decoration: none;">Liste des marchés</a></li>
-                    <li class="breadcrumb-item active" aria-current="page" style="color: white;">Détails</li>
-                </ol>
-            </nav>
-            
-            <h1 class="page-title">{{ marche.titre }}</h1>
-            <p class="page-subtitle">Informations complètes sur le marché public. Consultez les détails, dates clés et documents associés.</p>
-            
-            <div class="metadata mt-3">
-                <div class="metadata-item">
-                    <i class="fas fa-hashtag"></i>
-                    <span>Référence : <strong>#{{ marche.id }}</strong></span>
+            <div class="mb-4">
+                <div class="breadcrumb-custom">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item">
+                            <a href="{% url 'marche_list' %}">
+                                <i class="fas fa-gavel me-1"></i> Marchés
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item active">{{ marche.titre|truncatechars:50 }}</li>
+                    </ol>
                 </div>
-                <div class="metadata-item">
-                    <i class="far fa-calendar-alt"></i>
-                    <span>Consulté le : {{ "now"|date:"d/m/Y" }}</span>
+            </div>
+
+            <div class="row align-items-end justify-content-between">
+                <div class="col-lg-8">
+                    <h1 class="text-white mb-3" style="font-weight: 800; font-size: 2.2rem; line-height: 1.3;">
+                        {{ marche.titre }}
+                    </h1>
+                    <p class="text-white-50 mb-0" style="font-size: 0.95rem;">
+                        <i class="fas fa-info-circle me-2"></i>Informations complètes et documents associés
+                    </p>
+                </div>
+                <div class="col-lg-4 mt-3 mt-lg-0">
+                    <div class="stat-card">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="text-muted small mb-1">Référence</div>
+                                <div class="fw-bold fs-5">#{{ marche.id }}</div>
+                            </div>
+                            <div class="text-end">
+                                <div class="text-muted small mb-1">Consultation</div>
+                                <div class="fw-bold fs-5">{{ "now"|date:"d/m/Y" }}</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="container">
-        <!-- Carte d'informations principales -->
-        <div class="info-card">
-            <div class="card-header-custom">
-                <h3><i class="fas fa-info-circle"></i> Informations du marché</h3>
+    <div class="container" style="margin-top: -1rem;">
+        <!-- Informations principales -->
+        <div class="card-premium animate-up" style="animation-delay: 0.1s;">
+            <div class="card-header-premium">
+                <h3><i class="fas fa-chart-line me-2"></i> Détails du marché</h3>
                 {% if marche.statut == "Ouvert" %}
-                <span class="status-badge status-ouvert">
-                    <i class="fas fa-lock-open"></i> {{ marche.statut }}
-                </span>
+                    <span class="badge-modern badge-open"><i class="fas fa-lock-open"></i> OUVERT</span>
                 {% elif marche.statut == "Clôturé" %}
-                <span class="status-badge status-cloture">
-                    <i class="fas fa-lock"></i> {{ marche.statut }}
-                </span>
+                    <span class="badge-modern badge-closed"><i class="fas fa-lock"></i> CLÔTURÉ</span>
+                {% elif marche.statut == "PENDING" %}
+                    <span class="badge-modern badge-pending"><i class="fas fa-hourglass-half"></i> EN ATTENTE</span>
+                {% elif marche.statut == "VALIDATED" %}
+                    <span class="badge-modern badge-validated"><i class="fas fa-check-circle"></i> VALIDÉ</span>
+                {% elif marche.statut == "REJECTED" %}
+                    <span class="badge-modern badge-rejected"><i class="fas fa-times-circle"></i> REJETÉ</span>
                 {% else %}
-                <span class="status-badge status-annule">
-                    <i class="fas fa-ban"></i> {{ marche.statut }}
-                </span>
+                    <span class="badge-modern badge-rejected"><i class="fas fa-ban"></i> {{ marche.statut }}</span>
                 {% endif %}
             </div>
-            
-            <div class="info-grid">
-                <div class="info-item">
-                    <div class="info-label">
-                        <i class="fas fa-university"></i> Autorité contractante
+
+            <div class="info-grid-modern">
+                <div class="info-card-item">
+                    <div class="info-label-modern">
+                        <i class="fas fa-building"></i> Autorité contractante
                     </div>
-                    <div class="info-value">{{ marche.autorite }}</div>
+                    <div class="info-value-modern">{{ marche.autorite }}</div>
                 </div>
-                
-                <div class="info-item">
-                    <div class="info-label">
-                        <i class="fas fa-file-alt"></i> Type de publication
+
+                <div class="info-card-item">
+                    <div class="info-label-modern">
+                        <i class="fas fa-tag"></i> Type de publication
                     </div>
-                    <div class="info-value">
-                        <span class="badge bg-primary bg-opacity-10 text-primary p-2">
+                    <div class="info-value-modern">
+                        <span style="background: #eef2ff; padding: 0.25rem 0.75rem; border-radius: 8px; font-size: 0.85rem;">
                             {{ marche.type_publication }}
                         </span>
                     </div>
                 </div>
-                
-                <div class="info-item date-highlight">
-                    <div class="info-label">
-                        <i class="fas fa-calendar-check"></i> Date de publication
+
+                <div class="info-card-item highlight-card">
+                    <div class="info-label-modern">
+                        <i class="fas fa-calendar-alt"></i> Date de publication
                     </div>
-                    <div class="info-value">{{ marche.date_publication }}</div>
+                    <div class="info-value-modern">
+                        <i class="far fa-calendar-check me-1 text-primary"></i>
+                        {{ marche.date_publication|date:"d F Y"|default:marche.date_publication }}
+                    </div>
                 </div>
-                
-                <div class="info-item">
-                    <div class="info-label">
+
+                <div class="info-card-item">
+                    <div class="info-label-modern">
                         <i class="fas fa-play-circle"></i> Date de début
                     </div>
-                    <div class="info-value">{{ marche.date_debut }}</div>
+                    <div class="info-value-modern">
+                        <i class="far fa-calendar me-1"></i>
+                        {{ marche.date_debut|date:"d F Y"|default:marche.date_debut }}
+                    </div>
                 </div>
-                
-                <div class="info-item">
-                    <div class="info-label">
+
+                <div class="info-card-item">
+                    <div class="info-label-modern">
                         <i class="fas fa-flag-checkered"></i> Date de fin
                     </div>
-                    <div class="info-value">{{ marche.date_fin }}</div>
-                </div>
-                
-                <div class="info-item">
-                    <div class="info-label">
-                        <i class="fas fa-money-bill-wave"></i> Montant estimé
+                    <div class="info-value-modern">
+                        <i class="far fa-calendar me-1"></i>
+                        {{ marche.date_fin|date:"d F Y"|default:marche.date_fin }}
                     </div>
-                    <div class="montant-value">{{ marche.montant }}</div>
+                </div>
+
+                <div class="info-card-item">
+                    <div class="info-label-modern">
+                        <i class="fas fa-euro-sign"></i> Montant estimé
+                    </div>
+                    <div class="amount-value">{{ marche.montant }}</div>
                 </div>
             </div>
         </div>
 
-        <!-- Section documents -->
-        <div class="documents-card">
-            <div class="card-header-custom">
-                <h3><i class="fas fa-folder-open"></i> Documents associés</h3>
-                <span class="badge bg-primary bg-opacity-10 text-primary p-2">
-                    {{ documents|length }} document{{ documents|pluralize }}
+        <!-- Documents -->
+        <div class="card-premium mt-4 animate-up" style="animation-delay: 0.2s;">
+            <div class="card-header-premium">
+                <h3><i class="fas fa-folder-open me-2"></i> Documents officiels</h3>
+                <span style="background: #eef2ff; padding: 0.3rem 1rem; border-radius: 50px; font-size: 0.8rem; font-weight: 600;">
+                    <i class="fas fa-file me-1"></i> {{ documents|length }} document{{ documents|pluralize }}
                 </span>
             </div>
-            
-            <div class="documents-list">
+
+            <div class="doc-list">
                 {% for doc in documents %}
-                <div class="document-item">
-                    <div class="document-info">
-                        <div class="document-icon">
+                <div class="doc-item">
+                    <div class="d-flex align-items-center gap-3 flex-grow-1">
+                        <div class="doc-icon-wrapper">
                             {% if doc.file_name|lower|slice:"-4:" == ".pdf" %}
-                            <i class="fas fa-file-pdf"></i>
+                                <i class="fas fa-file-pdf"></i>
                             {% elif doc.file_name|lower|slice:"-5:" == ".docx" or doc.file_name|lower|slice:"-4:" == ".doc" %}
-                            <i class="fas fa-file-word"></i>
-                            {% elif doc.file_name|lower|slice:"-5:" == ".xlsx" or doc.file_name|lower|slice:"-4:" == ".xls" %}
-                            <i class="fas fa-file-excel"></i>
-                            {% elif doc.file_name|lower|slice:"-5:" == ".pptx" or doc.file_name|lower|slice:"-4:" == ".ppt" %}
-                            <i class="fas fa-file-powerpoint"></i>
-                            {% elif doc.file_name|lower|slice:"-4:" == ".zip" or doc.file_name|lower|slice:"-4:" == ".rar" %}
-                            <i class="fas fa-file-archive"></i>
+                                <i class="fas fa-file-word"></i>
+                            elif doc.file_name|lower|slice:"-5:" == ".xlsx" or doc.file_name|lower|slice:"-4:" == ".xls"
+                                <i class="fas fa-file-excel"></i>
                             {% else %}
-                            <i class="fas fa-file"></i>
+                                <i class="fas fa-file-alt"></i>
                             {% endif %}
                         </div>
                         <div>
-                            <div class="document-name">{{ doc.file_name }}</div>
-                            <div class="document-type">
-                                {% if doc.file_name|lower|slice:"-4:" == ".pdf" %}PDF
-                                {% elif doc.file_name|lower|slice:"-5:" == ".docx" %}Word
-                                {% elif doc.file_name|lower|slice:"-4:" == ".doc" %}Word
-                                {% elif doc.file_name|lower|slice:"-5:" == ".xlsx" %}Excel
-                                {% elif doc.file_name|lower|slice:"-4:" == ".xls" %}Excel
-                                {% elif doc.file_name|lower|slice:"-5:" == ".pptx" %}PowerPoint
-                                {% elif doc.file_name|lower|slice:"-4:" == ".ppt" %}PowerPoint
-                                {% elif doc.file_name|lower|slice:"-4:" == ".zip" %}Archive
-                                {% elif doc.file_name|lower|slice:"-4:" == ".rar" %}Archive
+                            <div class="fw-semibold mb-1">{{ doc.file_name }}</div>
+                            <div class="small text-muted">
+                                <i class="far fa-file"></i> 
+                                {% if doc.file_name|lower|slice:"-4:" == ".pdf" %}Document PDF
+                                {% elif doc.file_name|lower|slice:"-5:" == ".docx" %}Document Word
+                                {% elif doc.file_name|lower|slice:"-5:" == ".xlsx" %}Tableur Excel
                                 {% else %}Document{% endif %}
                             </div>
                         </div>
                     </div>
-                    <a href="{{ doc.file_url }}" class="btn btn-download" download>
+                    <a href="{{ doc.file_url }}" class="btn-download-premium" download>
                         <i class="fas fa-download"></i> Télécharger
                     </a>
                 </div>
                 {% empty %}
-                <div class="empty-documents">
-                    <i class="fas fa-folder-open"></i>
-                    <h4>Aucun document disponible</h4>
-                    <p class="mb-0">Aucun document n'est associé à ce marché pour le moment.</p>
+                <div class="empty-state-premium">
+                    <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
+                    <h5 class="fw-bold">Aucun document disponible</h5>
+                    <p class="text-muted mb-0">Aucun document n'est associé à ce marché pour le moment.</p>
                 </div>
                 {% endfor %}
             </div>
         </div>
 
         <!-- Actions -->
-        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
-            <a href="{% url 'marche_list' %}" class="btn-back">
+        <div class="action-buttons">
+            <a href="{% url 'marche_list' %}" class="btn-back-premium">
                 <i class="fas fa-arrow-left"></i> Retour à la liste
             </a>
-            
-            <div class="d-flex gap-2">
-                <button class="btn btn-outline-primary" onclick="window.print()">
+
+            <div class="d-flex gap-2 flex-wrap ms-auto">
+                {% if is_collector %}
+                    {% if marche.statut == "PENDING" %}
+                        <a href="{% url 'marche_update' marche.id %}" class="btn-primary-premium">
+                            <i class="fas fa-edit"></i> Modifier
+                        </a>
+                    {% else %}
+                        <button class="btn-outline-premium" disabled style="cursor: not-allowed;">
+                            <i class="fas fa-lock"></i> Non modifiable
+                        </button>
+                    {% endif %}
+                {% endif %}
+
+                {% if is_validator %}
+                    {% if marche.statut == "PENDING" %}
+                        <a href="{% url 'validator_detail' marche.id %}" class="btn-primary-premium" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                            <i class="fas fa-balance-scale"></i> Valider
+                        </a>
+                    {% endif %}
+                {% endif %}
+
+                <button class="btn-outline-premium" onclick="window.print()">
                     <i class="fas fa-print"></i> Imprimer
                 </button>
-                <button class="btn btn-outline-secondary">
+
+                <button class="btn-outline-premium" id="shareBtn">
                     <i class="fas fa-share-alt"></i> Partager
                 </button>
             </div>
@@ -529,49 +623,34 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Animation d'entrée
         document.addEventListener('DOMContentLoaded', function() {
-            // Animation des cartes
-            const cards = document.querySelectorAll('.info-card, .documents-card');
-            cards.forEach((card, index) => {
-                card.style.opacity = '0';
-                card.style.transform = 'translateY(20px)';
-                
-                setTimeout(() => {
-                    card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-                    card.style.opacity = '1';
-                    card.style.transform = 'translateY(0)';
-                }, index * 200);
-            });
-            
-            // Animation des éléments de liste
-            const documentItems = document.querySelectorAll('.document-item');
-            documentItems.forEach((item, index) => {
-                item.style.opacity = '0';
-                item.style.transform = 'translateX(-20px)';
-                
-                setTimeout(() => {
-                    item.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
-                    item.style.opacity = '1';
-                    item.style.transform = 'translateX(0)';
-                }, 400 + (index * 100));
-            });
-            
-            // Fonction de partage
-            document.querySelector('.btn-outline-secondary').addEventListener('click', function() {
-                if (navigator.share) {
-                    navigator.share({
-                        title: '{{ marche.titre }}',
-                        text: 'Détails du marché public : {{ marche.titre }}',
+            // Share functionality
+            const shareBtn = document.getElementById('shareBtn');
+            if (shareBtn) {
+                shareBtn.addEventListener('click', async function() {
+                    const shareData = {
+                        title: '{{ marche.titre|escapejs }}',
+                        text: 'Détails du marché public',
                         url: window.location.href,
-                    })
-                    .catch(console.error);
-                } else {
-                    // Fallback pour les navigateurs qui ne supportent pas l'API Web Share
-                    navigator.clipboard.writeText(window.location.href);
-                    alert('Lien copié dans le presse-papier !');
-                }
-            });
+                    };
+                    
+                    try {
+                        if (navigator.share) {
+                            await navigator.share(shareData);
+                        } else {
+                            await navigator.clipboard.writeText(window.location.href);
+                            // Show temporary feedback
+                            const originalText = shareBtn.innerHTML;
+                            shareBtn.innerHTML = '<i class="fas fa-check"></i> Copié !';
+                            setTimeout(() => {
+                                shareBtn.innerHTML = originalText;
+                            }, 2000);
+                        }
+                    } catch (err) {
+                        console.log('Share cancelled or failed');
+                    }
+                });
+            }
         });
     </script>
 </body>

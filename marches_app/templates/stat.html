@@ -25,13 +25,36 @@ body{
     padding:40px;
 }
 
-/* ===== CONTAINER ===== */
 .container{
     max-width:1200px;
     margin:auto;
 }
 
-/* ===== HEADER ===== */
+/* TOP BAR */
+.top-bar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+    flex-wrap:wrap;
+    margin-bottom:30px;
+}
+
+.back-btn{
+    padding:10px 18px;
+    background:#6b7280;
+    color:white;
+    text-decoration:none;
+    border-radius:10px;
+    font-weight:600;
+    transition:0.2s;
+}
+
+.back-btn:hover{
+    background:#4b5563;
+}
+
+/* HEADER */
 .header{
     margin-bottom:40px;
 }
@@ -39,7 +62,6 @@ body{
 .header h1{
     font-size:32px;
     font-weight:700;
-    letter-spacing:-0.5px;
 }
 
 .header p{
@@ -47,7 +69,7 @@ body{
     margin-top:8px;
 }
 
-/* ===== KPI CARDS ===== */
+/* KPI */
 .kpi-grid{
     display:grid;
     grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
@@ -73,7 +95,7 @@ body{
     font-weight:700;
 }
 
-/* ===== SEARCH ===== */
+/* SEARCH */
 .search-bar{
     margin-bottom:30px;
 }
@@ -84,16 +106,9 @@ body{
     border-radius:12px;
     border:1px solid var(--border);
     font-size:15px;
-    transition:all .2s;
 }
 
-.search-bar input:focus{
-    outline:none;
-    border-color:var(--primary);
-    box-shadow:0 0 0 3px rgba(37,99,235,.1);
-}
-
-/* ===== TABLE ===== */
+/* TABLE */
 .table-card{
     background:var(--card);
     border-radius:18px;
@@ -115,25 +130,18 @@ th{
     padding:16px 20px;
     font-size:13px;
     text-transform:uppercase;
-    letter-spacing:.5px;
     color:var(--muted);
 }
 
 td{
     padding:18px 20px;
     border-top:1px solid var(--border);
-    font-size:15px;
-}
-
-tbody tr{
-    transition:background .15s ease;
 }
 
 tbody tr:hover{
     background:#f9fafb;
 }
 
-/* ===== TOP 3 STYLE ===== */
 .top-badge{
     font-size:11px;
     padding:4px 8px;
@@ -146,19 +154,13 @@ tbody tr:hover{
 .rank{
     font-weight:600;
     color:var(--muted);
-    width:40px;
 }
 
 .markets{
     font-weight:600;
 }
 
-.montant{
-    color:var(--success);
-    font-weight:600;
-}
-
-/* ===== PAGINATION ===== */
+/* PAGINATION */
 .pagination{
     margin-top:30px;
     display:flex;
@@ -173,12 +175,6 @@ tbody tr:hover{
     background:white;
     text-decoration:none;
     color:var(--text);
-    font-size:14px;
-}
-
-.page-btn:hover{
-    border-color:var(--primary);
-    color:var(--primary);
 }
 
 .page-current{
@@ -187,10 +183,8 @@ tbody tr:hover{
     border-color:var(--primary);
 }
 
-/* ===== RESPONSIVE ===== */
 @media(max-width:768px){
     body{padding:20px;}
-    th,td{padding:12px;}
 }
 </style>
 </head>
@@ -198,80 +192,85 @@ tbody tr:hover{
 <body>
 <div class="container">
 
-    <!-- HEADER -->
-    <div class="header">
-        <h1>Statistiques des entreprises</h1>
-        <p>Classement par nombre de marchés attribués</p>
+<!-- BOUTON RETOUR -->
+<div class="top-bar">
+    <div></div>
+    <a href="{% url 'marche_list' %}" class="back-btn">
+        ← Retour Liste Marchés
+    </a>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+    <h1>Statistiques des entreprises</h1>
+    <p>Classement par nombre de marchés attribués</p>
+</div>
+
+<!-- KPI -->
+<div class="kpi-grid">
+    <div class="kpi">
+        <div class="kpi-label">Entreprises totales</div>
+        <div class="kpi-value">{{ page_obj.paginator.count }}</div>
     </div>
-
-    <!-- KPI -->
-    <div class="kpi-grid">
-        <div class="kpi">
-            <div class="kpi-label">Entreprises totales</div>
-            <div class="kpi-value">{{ page_obj.paginator.count }}</div>
-        </div>
-        <div class="kpi">
-            <div class="kpi-label">Pages</div>
-            <div class="kpi-value">{{ page_obj.paginator.num_pages }}</div>
-        </div>
-        <div class="kpi">
-            <div class="kpi-label">Affichées</div>
-            <div class="kpi-value">{{ entreprises|length }}</div>
-        </div>
+    <div class="kpi">
+        <div class="kpi-label">Pages</div>
+        <div class="kpi-value">{{ page_obj.paginator.num_pages }}</div>
     </div>
-
-    <!-- SEARCH -->
-    <form method="get" class="search-bar">
-        <input type="text" name="search" placeholder="Rechercher une entreprise..." value="{{ request.GET.search }}">
-    </form>
-
-    <!-- TABLE -->
-    <div class="table-card">
-        <table>
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Entreprise</th>
-                    <th>Marchés</th>
-                    
-                </tr>
-            </thead>
-            <tbody>
-            {% for e in entreprises %}
-                <tr>
-                    <td class="rank">{{ forloop.counter|add:page_obj.start_index|add:"-1" }}</td>
-                    <td>
-                        {{ e.attributaire__nom }}
-                        {% if forloop.counter <= 3 and page_obj.number == 1 %}
-                            <span class="top-badge">Top {{ forloop.counter }}</span>
-                        {% endif %}
-                    </td>
-                    <td class="markets">{{ e.nombre_marches }}</td>
-                    
-                </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="4">Aucune donnée</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+    <div class="kpi">
+        <div class="kpi-label">Affichées</div>
+        <div class="kpi-value">{{ entreprises|length }}</div>
     </div>
+</div>
 
-    <!-- PAGINATION -->
-    <div class="pagination">
-        {% if page_obj.has_previous %}
-            <a href="?page={{ page_obj.previous_page_number }}&search={{ request.GET.search }}" class="page-btn">Précédent</a>
+<!-- SEARCH -->
+<form method="get" class="search-bar">
+    <input type="text" name="search" placeholder="Rechercher une entreprise..." value="{{ request.GET.search }}">
+</form>
+
+<!-- TABLE -->
+<div class="table-card">
+<table>
+<thead>
+<tr>
+    <th>#</th>
+    <th>Entreprise</th>
+    <th>Marchés</th>
+</tr>
+</thead>
+
+<tbody>
+{% for e in entreprises %}
+<tr>
+    <td class="rank">{{ forloop.counter|add:page_obj.start_index|add:"-1" }}</td>
+    <td>
+        {{ e.attributaire__nom }}
+        {% if forloop.counter <= 3 and page_obj.number == 1 %}
+            <span class="top-badge">Top {{ forloop.counter }}</span>
         {% endif %}
+    </td>
+    <td class="markets">{{ e.nombre_marches }}</td>
+</tr>
+{% empty %}
+<tr>
+    <td colspan="3">Aucune donnée</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
 
-        <span class="page-btn page-current">
-            {{ page_obj.number }}
-        </span>
+<!-- PAGINATION -->
+<div class="pagination">
+{% if page_obj.has_previous %}
+<a href="?page={{ page_obj.previous_page_number }}&search={{ request.GET.search }}" class="page-btn">Précédent</a>
+{% endif %}
 
-        {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}&search={{ request.GET.search }}" class="page-btn">Suivant</a>
-        {% endif %}
-    </div>
+<span class="page-btn page-current">{{ page_obj.number }}</span>
+
+{% if page_obj.has_next %}
+<a href="?page={{ page_obj.next_page_number }}&search={{ request.GET.search }}" class="page-btn">Suivant</a>
+{% endif %}
+</div>
 
 </div>
 </body>

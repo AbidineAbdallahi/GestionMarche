@@ -1,0 +1,39 @@
+<h2>Détail du marché</h2>
+
+<p><strong>ID:</strong> {{ marche.id }}</p>
+<p><strong>Titre:</strong> {{ marche.titre }}</p>
+<p><strong>Autorité:</strong> {{ marche.autorite }}</p>
+<p><strong>Statut:</strong> {{ marche.statut }}</p>
+
+<hr>
+
+{% if marche.statut == "PENDING" %}
+<form method="POST" action="{% url 'validator_action' marche.id %}">
+    {% csrf_token %}
+
+    <textarea name="commentaire" placeholder="Commentaire (optionnel)"></textarea>
+
+    <br><br>
+
+    <button type="submit" name="action" value="VALIDATED">✔ Valider</button>
+    <button type="submit" name="action" value="REJECTED">❌ Rejeter</button>
+</form>
+{% else %}
+<p>⚠️ Ce marché a déjà été traité</p>
+{% endif %}
+
+<hr>
+
+<h3>Historique</h3>
+
+{% for h in history %}
+    <div>
+        <strong>{{ h.action }}</strong> - {{ h.utilisateur }}
+        <br>
+        {{ h.commentaire }}
+        <br>
+        {{ h.date_action }}
+    </div>
+{% empty %}
+    <p>Aucun historique</p>
+{% endfor %}

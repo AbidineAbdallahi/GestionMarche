@@ -1,6 +1,5 @@
-# models.py
 from django.db import models
-from django.db import models
+from django.conf import settings
 
 
 class Attributaire(models.Model):
@@ -14,6 +13,8 @@ class Attributaire(models.Model):
 
     def __str__(self):
         return self.nom
+
+
 class Attribution(models.Model):
 
     marche = models.ForeignKey(
@@ -46,6 +47,7 @@ class Attribution(models.Model):
 
     def __str__(self):
         return f"{self.marche.id} - {self.attributaire.nom}"
+
 
 class PpmMarche(models.Model):
     reference_ppm = models.CharField(max_length=100)
@@ -82,12 +84,19 @@ class PpmMarche(models.Model):
     def __str__(self):
         return f"{self.reference_ppm} - Activité {self.numero_activite}"
 
+
 class Marche(models.Model):
     id = models.CharField(max_length=255, primary_key=True)
     titre = models.CharField(max_length=500)
     autorite = models.CharField(max_length=255, blank=True, null=True)
     type_publication = models.CharField(max_length=255, blank=True, null=True)
-    statut = models.CharField(max_length=255, blank=True, null=True)
+
+    # 🔥 AJOUT MINIMAL (statut validation)
+    statut = models.CharField(
+        max_length=20,
+        default='PENDING'
+    )
+
     date_publication = models.DateField(blank=True, null=True)
     date_debut = models.DateField(null=True, blank=True)
     date_fin = models.DateField(null=True, blank=True)
@@ -97,8 +106,39 @@ class Marche(models.Model):
     def __str__(self):
         return self.id
 
+
 class Document(models.Model):
     marche = models.ForeignKey(Marche, on_delete=models.CASCADE, related_name='documents')
     file_name = models.CharField(max_length=255)
     file_url = models.CharField(max_length=500, blank=True, null=True)
-   
+
+
+# ======================================================
+# 🔥 NOUVEAU MODEL : HISTORIQUE VALIDATION
+# ======================================================
+
+class MarcheValidation(models.Model):
+    ACTION_CHOICES = [
+        ('VALIDATED', 'Validated'),
+        ('REJECTED', 'Rejected'),
+    ]
+
+    marche = models.ForeignKey(
+        Marche,
+        on_delete=models.CASCADE,
+        related_name='validation_history'
+    )
+
+    utilisateur = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE
+    )
+
+    action = models.CharField(max_length=20, choices=ACTION_CHOICES)
+
+    commentaire = models.TextField(blank=True, null=True)
+
+    date_action = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.marche.id} - {self.action}"

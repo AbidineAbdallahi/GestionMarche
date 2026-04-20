@@ -1,0 +1,540 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validation | {{ marche.titre }}</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(145deg, #f1f5f9 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            padding: 2rem 0 3rem;
+        }
+
+        /* Container premium */
+        .container-premium {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Header avec effet glass */
+        .header-glass {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.2);
+        }
+
+        .header-glass::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            right: -10%;
+            width: 60%;
+            height: 160%;
+            background: radial-gradient(circle, rgba(99,102,241,0.2) 0%, transparent 70%);
+            transform: rotate(20deg);
+            pointer-events: none;
+        }
+
+        .header-glass::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 50%;
+            height: 140%;
+            background: radial-gradient(circle, rgba(168,85,247,0.15) 0%, transparent 70%);
+            transform: rotate(-15deg);
+            pointer-events: none;
+        }
+
+        /* Cartes modernes */
+        .card-premium {
+            background: white;
+            border-radius: 1.5rem;
+            border: none;
+            box-shadow: 0 10px 35px -12px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-premium:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 45px -15px rgba(0, 0, 0, 0.12);
+        }
+
+        .card-header-premium {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            padding: 1.25rem 1.75rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card-header-premium h5 {
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin: 0;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .card-body-premium {
+            padding: 1.75rem;
+        }
+
+        /* Badges de statut modernes */
+        .badge-premium {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.6rem 1.3rem;
+            border-radius: 100px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            letter-spacing: 0.3px;
+        }
+
+        .badge-pending {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            color: #92400e;
+            border: 1px solid #fbbf24;
+        }
+
+        .badge-validated {
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+            color: #065f46;
+            border: 1px solid #34d399;
+        }
+
+        .badge-rejected {
+            background: linear-gradient(135deg, #fee2e2, #fecaca);
+            color: #991b1b;
+            border: 1px solid #f87171;
+        }
+
+        /* Info grid */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .info-item {
+            background: #f8fafc;
+            border-radius: 1rem;
+            padding: 1rem 1.25rem;
+            transition: all 0.3s;
+            border: 1px solid #e2e8f0;
+        }
+
+        .info-item:hover {
+            background: white;
+            border-color: #c7d2fe;
+            transform: translateY(-2px);
+        }
+
+        .info-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            color: #64748b;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .montant-value {
+            font-size: 1.4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* Formulaire validation */
+        .form-premium {
+            background: #f8fafc;
+            border-radius: 1rem;
+            padding: 1.25rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .form-control-premium {
+            border: 1.5px solid #e2e8f0;
+            border-radius: 0.75rem;
+            padding: 0.75rem 1rem;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .form-control-premium:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+            outline: none;
+        }
+
+        /* Boutons d'action */
+        .btn-validate {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            border-radius: 0.75rem;
+            padding: 0.75rem 1.8rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-validate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.35);
+            color: white;
+        }
+
+        .btn-reject {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border: none;
+            border-radius: 0.75rem;
+            padding: 0.75rem 1.8rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-reject:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.35);
+            color: white;
+        }
+
+        .btn-back-premium {
+            background: white;
+            color: #4f46e5;
+            border: 2px solid #4f46e5;
+            border-radius: 0.75rem;
+            padding: 0.6rem 1.3rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-back-premium:hover {
+            background: #4f46e5;
+            color: white;
+            transform: translateX(-3px);
+        }
+
+        /* Timeline historique */
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 1.5rem;
+            border-left: 2px solid #e2e8f0;
+            padding-left: 1.5rem;
+            margin-left: 0.5rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -0.5rem;
+            top: 0;
+            width: 0.9rem;
+            height: 0.9rem;
+            border-radius: 50%;
+            background: #4f46e5;
+            border: 2px solid white;
+            box-shadow: 0 0 0 2px #e2e8f0;
+        }
+
+        .timeline-item.validated::before {
+            background: #10b981;
+        }
+
+        .timeline-item.rejected::before {
+            background: #ef4444;
+        }
+
+        .timeline-content {
+            background: #f8fafc;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            transition: all 0.3s;
+        }
+
+        .timeline-content:hover {
+            background: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transform: translateX(3px);
+        }
+
+        /* Alert modern */
+        .alert-premium {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border: none;
+            border-radius: 1rem;
+            padding: 1rem 1.25rem;
+            color: #92400e;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: fadeInUp 0.4s ease-out forwards;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container-premium {
+                padding: 0 1rem;
+            }
+
+            .header-glass {
+                padding: 1.25rem;
+            }
+
+            .card-body-premium {
+                padding: 1.25rem;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+
+            .btn-validate, .btn-reject {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .d-flex.gap-3 {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="container-premium">
+    <!-- Header avec effet glass -->
+    <div class="header-glass animate-in">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <i class="fas fa-gavel text-white-50" style="font-size: 1.2rem;"></i>
+                    <span class="text-white-50 small">Validation / Marché #{{ marche.id }}</span>
+                </div>
+                <h2 class="text-white mb-2" style="font-weight: 700; font-size: 1.6rem;">
+                    {{ marche.titre|truncatechars:60 }}
+                </h2>
+                <p class="text-white-50 mb-0 small">
+                    <i class="fas fa-building me-1"></i> {{ marche.autorite }}
+                </p>
+            </div>
+            <div>
+                <a href="{% url 'marche_list' %}" class="btn-back-premium">
+                    <i class="fas fa-arrow-left"></i> Retour
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Carte des informations du marché -->
+    <div class="card-premium animate-in" style="animation-delay: 0.1s;">
+        <div class="card-header-premium">
+            <i class="fas fa-info-circle" style="color: #4f46e5; font-size: 1.2rem;"></i>
+           
+            <div class="ms-auto">
+                {% if marche.statut == "PENDING" %}
+                    <span class="badge-premium badge-pending">
+                        <i class="fas fa-hourglass-half"></i> EN ATTENTE DE VALIDATION
+                    </span>
+                {% elif marche.statut == "VALIDATED" %}
+                    <span class="badge-premium badge-validated">
+                        <i class="fas fa-check-circle"></i> VALIDÉ
+                    </span>
+                {% elif marche.statut == "REJECTED" %}
+                    <span class="badge-premium badge-rejected">
+                        <i class="fas fa-times-circle"></i> REJETÉ
+                    </span>
+                {% endif %}
+            </div>
+        </div>
+       
+        </div>
+    </div>
+
+    <!-- Action de validation -->
+    <div class="card-premium animate-in" style="animation-delay: 0.2s;">
+        <div class="card-header-premium">
+            <i class="fas fa-balance-scale" style="color: #4f46e5; font-size: 1.2rem;"></i>
+            <h5>Validation du marché</h5>
+        </div>
+        <div class="card-body-premium">
+            {% if marche.statut == "PENDING" %}
+                <form method="POST" action="{% url 'validator_action' marche.id %}">
+                    {% csrf_token %}
+                    <div class="form-premium">
+                        <label class="form-label fw-semibold mb-2">
+                            <i class="fas fa-comment-dots me-1"></i> Commentaire (optionnel)
+                        </label>
+                        <textarea name="commentaire" class="form-control form-control-premium" rows="3" 
+                                  placeholder="Ajoutez un commentaire pour justifier votre décision..."></textarea>
+                    </div>
+                    <div class="d-flex gap-3 mt-4">
+                        <button type="submit" name="action" value="VALIDATED" class="btn-validate">
+                            <i class="fas fa-check-circle"></i> Valider le marché
+                        </button>
+                        <button type="submit" name="action" value="REJECTED" class="btn-reject">
+                            <i class="fas fa-times-circle"></i> Rejeter le marché
+                        </button>
+                    </div>
+                </form>
+            {% else %}
+                <div class="alert-premium">
+                    <i class="fas fa-info-circle fa-lg"></i>
+                    <span>Ce marché a déjà été traité et ne peut plus être modifié.</span>
+                </div>
+                <div class="mt-3 text-center">
+                    <a href="{% url 'marche_list' %}" class="btn-back-premium">
+                        <i class="fas fa-arrow-left"></i> Retour à la liste
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Historique des validations -->
+    <div class="card-premium animate-in" style="animation-delay: 0.3s;">
+        <div class="card-header-premium">
+            <i class="fas fa-history" style="color: #4f46e5; font-size: 1.2rem;"></i>
+            <h5>Historique des validations</h5>
+            <span class="ms-auto small text-muted">{{ history|length }} action(s)</span>
+        </div>
+        <div class="card-body-premium">
+            {% if history %}
+                <div class="timeline">
+                    {% for h in history %}
+                        <div class="timeline-item {% if h.action == 'VALIDATED' %}validated{% elif h.action == 'REJECTED' %}rejected{% endif %}">
+                            <div class="timeline-content">
+                                <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-2">
+                                    <div>
+                                        {% if h.action == "VALIDATED" %}
+                                            <span class="badge-premium badge-validated" style="padding: 0.25rem 0.8rem; font-size: 0.7rem;">
+                                                <i class="fas fa-check-circle"></i> VALIDATION
+                                            </span>
+                                        {% elif h.action == "REJECTED" %}
+                                            <span class="badge-premium badge-rejected" style="padding: 0.25rem 0.8rem; font-size: 0.7rem;">
+                                                <i class="fas fa-times-circle"></i> REJET
+                                            </span>
+                                        {% else %}
+                                            <span class="badge-premium badge-pending" style="padding: 0.25rem 0.8rem; font-size: 0.7rem;">
+                                                <i class="fas fa-edit"></i> {{ h.action }}
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="text-muted small">
+                                        <i class="far fa-clock me-1"></i> {{ h.date_action|date:"d/m/Y H:i" }}
+                                    </div>
+                                </div>
+                                <div class="mb-2">
+                                    <i class="fas fa-user-circle me-1 text-muted"></i>
+                                    <strong>{{ h.utilisateur }}</strong>
+                                </div>
+                                {% if h.commentaire %}
+                                    <div class="mt-2 p-2 bg-light rounded" style="font-size: 0.85rem;">
+                                        <i class="fas fa-quote-left me-1 text-muted"></i>
+                                        {{ h.commentaire }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-timeline fa-3x text-muted mb-3"></i>
+                    <p class="text-muted mb-0">Aucune action de validation enregistrée pour le moment.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Animation supplémentaire au chargement
+    document.addEventListener('DOMContentLoaded', function() {
+        // Ajout d'une classe d'animation pour les éléments
+        const cards = document.querySelectorAll('.card-premium');
+        cards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+    });
+</script>
+</body>
+</html>

@@ -26,6 +26,10 @@ SECRET_KEY = 'django-insecure-e9si5m-8w55!k!+h579yu)p^@jaryd9x=m=)^nka!(-5*=ncv+
 DEBUG = True
 
 ALLOWED_HOSTS = []
+# MIDDLEWARE = [
+    
+#     'gestion_marches.middleware.LoginRequiredMiddleware',
+# ]
 
 
 # Application definition
@@ -143,7 +147,8 @@ import os
 # MEDIA_URL = '/media/'
 # MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 import os
 #BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FILES_HTTP_BASE_URL = "http://localhost:8081/"
@@ -155,3 +160,13 @@ DOCS_MARCHE_ROOT = "/docs_marche"
 #DOCS_MARCHE_ROOT = os.path.join(BASE_DIR, "docs_marche")
 MEDIA_URL = '/media/'
 #MEDIA_ROOT = r'C:\Users\abidi\Desktop\ExtractionDonne\docs_marche'  # chemin absolu vers ton dossier docs_marche
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'marche_list'
+LOGOUT_REDIRECT_URL = 'login'
+DOCS_MARCHE_ROOT = r"C:\Users\abidi\Desktop\ExtractionDonne\docs_marche"
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+}
