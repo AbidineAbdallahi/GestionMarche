@@ -85,13 +85,21 @@ class PpmMarche(models.Model):
         return f"{self.reference_ppm} - Activité {self.numero_activite}"
 
 
+from django.db import models
+from django.contrib.auth.models import User
+
+
 class Marche(models.Model):
     id = models.CharField(max_length=255, primary_key=True)
     titre = models.CharField(max_length=500)
     autorite = models.CharField(max_length=255, blank=True, null=True)
     type_publication = models.CharField(max_length=255, blank=True, null=True)
 
-    # 🔥 AJOUT MINIMAL (statut validation)
+    # nouveaux champs
+    mode_selection = models.CharField(max_length=255, blank=True, null=True)
+    type_marche = models.CharField(max_length=150, blank=True, null=True)
+
+    # statut validation
     statut = models.CharField(
         max_length=20,
         default='PENDING'
@@ -102,6 +110,15 @@ class Marche(models.Model):
     date_fin = models.DateField(null=True, blank=True)
     montant = models.CharField(max_length=255, null=True, blank=True)
     updated_at = models.DateField(null=True, blank=True)
+
+    # 🔥 propriétaire du marché (collector)
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="marches_created"
+    )
 
     def __str__(self):
         return self.id

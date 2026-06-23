@@ -8,10 +8,23 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, Group
 from django.views.decorators.cache import never_cache
 from functools import wraps
+import re
+from django.db.models import Q
 import os
+from .models import Attribution
+from .forms import UserCreateForm
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .forms import UserCreateForm
 import uuid
 import json
 from django.db import transaction
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
+from django.http import HttpResponseForbidden
+from .forms import AttributaireForm
+from .models import Attributaire
 
 from .models import (
     Marche, Attribution, Attributaire,
@@ -24,8 +37,19 @@ from .forms import MarcheForm
 # 🔐 AUTHENTIFICATION
 # ======================================================
 
+
+
 @never_cache
 def login_view(request):
+    if request.user.is_authenticated:
+        if request.user.groups.filter(name="Collector").exists():
+            return redirect("collector_dashboard")
+
+        if request.user.groups.filter(name="Validator").exists():
+            return redirect("marche_list")
+
+        return redirect("visiteur")
+
     if request.method == "POST":
         username = request.POST.get("username")
         password = request.POST.get("password")
@@ -35,15 +59,24 @@ def login_view(request):
         if user is not None:
             login(request, user)
 
+            if user.groups.filter(name="Collector").exists():
+                return redirect("collector_dashboard")
+
             if user.groups.filter(name="Validator").exists():
                 return redirect("marche_list")
-            elif user.groups.filter(name="Collector").exists():
-                return redirect("collector_dashboard")
-            else:
-                return redirect("marche_list")
+
+            return redirect("visiteur")
+
+        return render(request, "login.html", {
+            "error": "Nom d'utilisateur ou mot de passe incorrect"
+        })
 
     return render(request, "login.html")
 
+
+def logout_view(request):
+    logout(request)
+    return redirect("login")
 
 @never_cache
 def logout_view(request):
@@ -88,8 +121,8 @@ def marche_list(request):
     # 🔍 filtres
     if search:
         marches = marches.filter(
-            Q(titre__icontains=search) |
-            Q(autorite__icontains=search)
+            Q(titre__istartswith=search) |
+            Q(autorite__istartswith=search)
         )
 
     if statut:
@@ -122,23 +155,27 @@ def marche_list(request):
 def marche_detail(request, marche_id):
     marche = get_object_or_404(Marche, id=marche_id)
 
-    # 🔐 sécurité accès
     if not request.user.groups.filter(name__in=["Collector", "Validator", "Admin"]).exists():
         if marche.statut != "VALIDATED":
             return HttpResponseForbidden("Accès refusé")
 
-    # ✅ booléens corrects
     is_validator = request.user.groups.filter(name="Validator").exists()
     is_collector = request.user.groups.filter(name="Collector").exists()
+
+    attributions = Attribution.objects.filter(
+        marche=marche
+    ).select_related("attributaire")
+
+    first_attribution = attributions.first()
 
     return render(request, "marche_details.html", {
         "marche": marche,
         "documents": marche.documents.all(),
-        "attributions": marche.attributions.select_related("attributaire"),
+        "attributions": attributions,
+        "first_attribution": first_attribution,
         "is_validator": is_validator,
         "is_collector": is_collector,
     })
-
 
 
 
@@ -257,7 +294,7 @@ def validator_action(request, marche_id):
         action = request.POST.get("action")
         commentaire = request.POST.get("commentaire")
 
-        if action in ["VALIDATED", "REJECTED"]:
+        if action in ["VALIDATED", "REJECTED","INCOMPLETE"]:
             marche.statut = action
             marche.save()
 
@@ -285,7 +322,10 @@ def collector_dashboard(request):
     statut = request.GET.get("statut", "").strip()
     type_pub = request.GET.get("type", "").strip()
 
-    marches_list = Marche.objects.all().order_by("-date_publication")
+    # ✅ chaque collector voit seulement ses marchés
+    marches_list = Marche.objects.filter(
+        created_by=request.user
+    ).order_by("-date_publication")
 
     if search:
         marches_list = marches_list.filter(
@@ -322,7 +362,7 @@ from django.db import transaction
 
 
 BASE_FOLDER = r"C:\Users\abidi\Desktop\ExtractionDonne\docs_marche"
-
+from decimal import Decimal, InvalidOperation
 
 @never_cache
 @login_required
@@ -335,34 +375,82 @@ def marche_create(request):
 
         if form.is_valid():
             with transaction.atomic():
-                # 1. Enregistrer le marché dans la base
+
                 marche = form.save(commit=False)
-                marche.id = str(uuid.uuid4())
+                marche.id = str(uuid.uuid4())[:15]
                 marche.statut = "PENDING"
+                marche.created_by = request.user
+
+                # sécuriser montant
+                try:
+                    if marche.montant:
+                        marche.montant = Decimal(
+                            str(marche.montant).replace(",", ".")
+                        )
+                    else:
+                        marche.montant = None
+                except (InvalidOperation, ValueError):
+                    marche.montant = None
+
                 marche.save()
 
-                # 2. Créer le dossier du marché
+                entreprise_nom = request.POST.get("entreprise_nom")
+                entreprise_nif = request.POST.get("entreprise_nif") or None
+                entreprise_telephone = request.POST.get("entreprise_telephone")
+                entreprise_email = request.POST.get("entreprise_email") or None
+                entreprise_adresse = request.POST.get("entreprise_adresse") or None
+
+                attributaire = None
+
+                if entreprise_nom:
+
+                    entreprise_nom = entreprise_nom[:20]
+
+                    if entreprise_nif:
+                        attributaire, created = Attributaire.objects.get_or_create(
+                            nif=entreprise_nif,
+                            defaults={
+                                "nom": entreprise_nom,
+                                "telephone": [entreprise_telephone] if entreprise_telephone else [],
+                                "email": entreprise_email,
+                                "adresse": entreprise_adresse,
+                            }
+                        )
+                    else:
+                        attributaire = Attributaire.objects.create(
+                            nom=entreprise_nom,
+                            nif=None,
+                            telephone=[entreprise_telephone] if entreprise_telephone else [],
+                            email=entreprise_email,
+                            adresse=entreprise_adresse,
+                        )
+
+                    Attribution.objects.create(
+                        marche=marche,
+                        attributaire=attributaire,
+                        fichier_source="Formulaire manuel",
+                        montant=marche.montant,
+                        devise="MRU"
+                    )
+
                 marche_folder = os.path.join(BASE_FOLDER, str(marche.id))
                 os.makedirs(marche_folder, exist_ok=True)
 
-                # 3. Récupérer tous les fichiers envoyés
                 uploaded_files = request.FILES.getlist("files")
-
                 documents_json = []
 
                 for uploaded_file in uploaded_files:
+
                     if not uploaded_file:
                         continue
 
                     file_name = uploaded_file.name
                     file_path = os.path.join(marche_folder, file_name)
 
-                    # Sauvegarde physique du fichier
                     with open(file_path, "wb+") as destination:
                         for chunk in uploaded_file.chunks():
                             destination.write(chunk)
 
-                    # Sauvegarde en base
                     Document.objects.create(
                         marche=marche,
                         file_name=file_name,
@@ -374,7 +462,6 @@ def marche_create(request):
                         "file_url": file_path
                     })
 
-                # 4. Créer le fichier marche.json
                 marche_data = {
                     "id": str(marche.id),
                     "titre": marche.titre,
@@ -383,12 +470,20 @@ def marche_create(request):
                     "date_publication": marche.date_publication.isoformat() if marche.date_publication else None,
                     "date_debut": marche.date_debut.isoformat() if marche.date_debut else None,
                     "date_fin": marche.date_fin.isoformat() if marche.date_fin else None,
-                    "montant": float(marche.montant) if marche.montant is not None else None,
+                    "montant": float(marche.montant) if marche.montant else None,
                     "statut": marche.statut,
-                    "documents": documents_json
+                    "documents": documents_json,
+                    "entreprise": {
+                        "nom": attributaire.nom if attributaire else None,
+                        "nif": attributaire.nif if attributaire else None,
+                        "telephone": attributaire.telephone if attributaire else [],
+                        "email": attributaire.email if attributaire else None,
+                        "adresse": attributaire.adresse if attributaire else None,
+                    }
                 }
 
                 json_path = os.path.join(marche_folder, "marche.json")
+
                 with open(json_path, "w", encoding="utf-8") as f:
                     json.dump(marche_data, f, ensure_ascii=False, indent=4)
 
@@ -398,33 +493,6 @@ def marche_create(request):
         form = MarcheForm()
 
     return render(request, "marche_form.html", {"form": form})
-def write_marche_json(marche):
-    marche_folder = os.path.join(BASE_FOLDER, str(marche.id))
-    os.makedirs(marche_folder, exist_ok=True)
-
-    documents_json = []
-    for doc in marche.documents.all():
-        documents_json.append({
-            "file_name": doc.file_name,
-            "file_url": doc.file_url
-        })
-
-    marche_data = {
-        "id": str(marche.id),
-        "titre": marche.titre,
-        "autorite": marche.autorite,
-        "type_publication": marche.type_publication,
-        "date_publication": marche.date_publication.isoformat() if marche.date_publication else None,
-        "date_debut": marche.date_debut.isoformat() if marche.date_debut else None,
-        "date_fin": marche.date_fin.isoformat() if marche.date_fin else None,
-        "montant": float(marche.montant) if marche.montant is not None else None,
-        "statut": marche.statut,
-        "documents": documents_json
-    }
-
-    json_path = os.path.join(marche_folder, "marche.json")
-    with open(json_path, "w", encoding="utf-8") as f:
-        json.dump(marche_data, f, ensure_ascii=False, indent=4)
 
 @never_cache
 @login_required
@@ -434,8 +502,17 @@ def marche_update(request, marche_id):
     if not request.user.groups.filter(name="Collector").exists():
         return HttpResponseForbidden("Accès réservé au Collector")
 
-    if marche.statut != "PENDING":
+    if marche.created_by != request.user:
+        return HttpResponseForbidden(
+            "Vous ne pouvez modifier que les marchés que vous avez créés."
+        )
+
+    if marche.statut not in ["PENDING", "INCOMPLETE"]:
         return HttpResponseForbidden("Impossible de modifier ce marché")
+
+    last_validation = MarcheValidation.objects.filter(
+        marche=marche
+    ).order_by("-date_action").first()
 
     if request.method == "POST":
         form = MarcheForm(request.POST, request.FILES, instance=marche)
@@ -443,8 +520,14 @@ def marche_update(request, marche_id):
         if form.is_valid():
             with transaction.atomic():
                 old_statut = marche.statut
+                old_created_by = marche.created_by
+
                 marche = form.save(commit=False)
-                marche.statut = old_statut
+                if old_statut == "INCOMPLETE":
+                    marche.statut = "PENDING"
+                else :
+                    marche.statut = old_statut
+                marche.created_by = old_created_by
                 marche.save()
 
                 marche_folder = os.path.join(BASE_FOLDER, str(marche.id))
@@ -480,6 +563,7 @@ def marche_update(request, marche_id):
         "form": form,
         "marche": marche,
         "documents": marche.documents.all(),
+        "last_validation": last_validation,
     })
 
 @never_cache
@@ -500,3 +584,95 @@ def document_delete(request, doc_id):
         doc.delete()
 
     return redirect("marche_update", marche_id=marche_id)
+from django.shortcuts import render
+from .models import Marche
+
+from django.core.paginator import Paginator
+from django.shortcuts import render
+from .models import Marche
+
+@never_cache
+@login_required
+def visiteurs_view(request):
+    # afficher seulement les marchés validés
+    marches_list = Marche.objects.filter(
+        statut='VALIDATED'
+    ).order_by('-date_publication', '-updated_at')
+
+    # pagination
+    paginator = Paginator(marches_list, 10)
+    page = request.GET.get('page')
+    marches = paginator.get_page(page)
+
+    return render(request, 'visiteurs.html', {
+        'marches': marches
+    })
+    # views.py
+
+
+
+
+def register_view(request):
+    if request.method == "POST":
+        form = UserCreateForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Compte créé avec succès.")
+            return redirect("login")
+
+    else:
+        form = UserCreateForm()
+
+    return render(request, "register.html", {
+        "form": form
+    })
+@never_cache
+@login_required
+def attributaire_create(request):
+
+    if not request.user.groups.filter(name="Collector").exists():
+        return HttpResponseForbidden("Accès réservé au Collector")
+
+    if request.method == "POST":
+
+        nom = request.POST.get("nom")
+        nif = request.POST.get("nif") or None
+        telephone = request.POST.get("telephone")
+        email = request.POST.get("email") or None
+        adresse = request.POST.get("adresse") or None
+
+        if nif:
+            attributaire, created = Attributaire.objects.get_or_create(
+                nif=nif,
+                defaults={
+                    "nom": nom,
+                    "telephone": [telephone] if telephone else [],
+                    "email": email,
+                    "adresse": adresse,
+                }
+            )
+
+            if not created:
+                attributaire.nom = nom
+                attributaire.telephone = [telephone] if telephone else []
+                attributaire.email = email
+                attributaire.adresse = adresse
+                attributaire.save()
+
+        else:
+            Attributaire.objects.create(
+                nom=nom,
+                nif=None,
+                telephone=[telephone] if telephone else [],
+                email=email,
+                adresse=adresse,
+            )
+
+        return redirect("collector_dashboard")
+
+    form = AttributaireForm()
+
+    return render(request, "attributaire_form.html", {
+        "form": form
+    })

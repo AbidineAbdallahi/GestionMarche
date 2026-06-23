@@ -296,7 +296,16 @@
         <i class="bi bi-pencil-square"></i> 
         Modifier le marché
     </div>
+ {% if marche.statut == "INCOMPLETE" %}
+<div class="alert alert-warning mb-4" style="border-radius:15px;">
+    <strong>⚠ Ce marché doit être complété</strong><br>
 
+    {% if last_validation.commentaire %}
+        <strong>Instructions du validateur :</strong><br>
+        {{ last_validation.commentaire }}
+    {% endif %}
+</div>
+{% endif %}
     <form method="post" enctype="multipart/form-data" id="updateForm">
         {% csrf_token %}
 
@@ -378,6 +387,7 @@
             </div>
         {% endfor %}
     </div>
+   
 </div>
 
 <script>

@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr">
+    {% load static %}
+{% load humanize %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -527,11 +529,12 @@
 
                 <div class="info-card-item">
                     <div class="info-label-modern">
-                        <i class="fas fa-euro-sign"></i> Montant estimé
+                        <i class="fas fa-euro-sign"></i> Montant 
                     </div>
-                    <div class="amount-value">{{ marche.montant }}</div>
+                    <div class="amount-value">{{ marche.montant|intcomma }}</div>
                 </div>
             </div>
+            
         </div>
 
         <!-- Documents -->
@@ -570,7 +573,7 @@
                         </div>
                     </div>
                     <a href="{{ doc.file_url }}" class="btn-download-premium" download>
-                        <i class="fas fa-download"></i> Télécharger
+                        <i class="fas fa-download"></i> Voir
                     </a>
                 </div>
                 {% empty %}
@@ -585,13 +588,25 @@
 
         <!-- Actions -->
         <div class="action-buttons">
-            <a href="{% url 'marche_list' %}" class="btn-back-premium">
-                <i class="fas fa-arrow-left"></i> Retour à la liste
-            </a>
+            {% if is_collector %}
+<a href="{% url 'collector_dashboard' %}" class="btn-back-premium">
+    <i class="fas fa-arrow-left"></i> Retour à la liste
+</a>
+
+{% elif is_validator %}
+<a href="{% url 'marche_list' %}" class="btn-back-premium">
+    <i class="fas fa-arrow-left"></i> Retour à la liste
+</a>
+
+{% else %}
+<a href="{% url 'visiteur' %}" class="btn-back-premium">
+    <i class="fas fa-arrow-left"></i> Retour à la liste
+</a>
+{% endif %}
 
             <div class="d-flex gap-2 flex-wrap ms-auto">
                 {% if is_collector %}
-                    {% if marche.statut == "PENDING" %}
+                    {% if marche.statut == "PENDING" or "INCOMPLETE" %}
                         <a href="{% url 'marche_update' marche.id %}" class="btn-primary-premium">
                             <i class="fas fa-edit"></i> Modifier
                         </a>

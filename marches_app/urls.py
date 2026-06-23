@@ -22,6 +22,9 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout_view'),
     path("marches/<str:marche_id>/modifier/", views.marche_update, name="marche_update"),
     path("documents/<int:doc_id>/supprimer/", views.document_delete, name="document_delete"),
+    path('visiteur/', views.visiteurs_view, name='visiteur'),
+    path("register/", views.register_view, name="create_user"),
+    path("entreprises/ajouter/", views.attributaire_create, name="attributaire_create"),
 ]
 
 

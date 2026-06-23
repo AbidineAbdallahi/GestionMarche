@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connexion</title>
+    <title>Connexion | Espace sécurisé</title>
     <style>
         * {
             margin: 0;
@@ -12,174 +12,448 @@
         }
 
         body {
-            font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+            background: linear-gradient(145deg, #0f172a 0%, #1e293b 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Effet de fond moderne */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.1) 0%, transparent 70%);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(-10%, -10%) rotate(0deg); }
+            50% { transform: translate(10%, 10%) rotate(5deg); }
         }
 
         .login-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 32px;
-            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.2);
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(20px);
+            border-radius: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 
+                        0 0 0 1px rgba(56, 189, 248, 0.2);
             padding: 2.5rem;
             width: 100%;
-            max-width: 420px;
-            transition: transform 0.3s ease;
+            max-width: 460px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            z-index: 1;
         }
 
         .login-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-8px);
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.3), 
+                        0 0 0 1px rgba(56, 189, 248, 0.4);
+        }
+
+        /* Icône décorative */
+        .logo-icon {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .logo-icon svg {
+            width: 48px;
+            height: 48px;
+            filter: drop-shadow(0 4px 6px rgba(56, 189, 248, 0.3));
         }
 
         h2 {
             font-size: 2rem;
-            font-weight: 600;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            font-weight: 700;
+            background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
             margin-bottom: 0.5rem;
             text-align: center;
+            letter-spacing: -0.02em;
         }
 
         .subtitle {
             text-align: center;
-            color: #6c757d;
+            color: #94a3b8;
             margin-bottom: 2rem;
             font-size: 0.9rem;
+            font-weight: 400;
         }
 
+        /* Styles des champs améliorés */
         .input-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.25rem;
             position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            color: #cbd5e1;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.01em;
         }
 
         .input-group input {
             width: 100%;
             padding: 14px 16px;
-            font-size: 1rem;
-            border: 2px solid #e9ecef;
-            border-radius: 16px;
-            background: white;
+            font-size: 0.95rem;
+            border: 2px solid #334155;
+            border-radius: 20px;
+            background: #0f172a;
+            color: #f1f5f9;
             transition: all 0.3s ease;
             outline: none;
             font-family: inherit;
         }
 
-        .input-group input:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
-        }
-
         .input-group input::placeholder {
-            color: #adb5bd;
+            color: #475569;
             font-weight: 400;
         }
 
+        .input-group input:focus {
+            border-color: #38bdf8;
+            background: #1e293b;
+            box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.1);
+        }
+
+        .input-group input:hover:not(:focus) {
+            border-color: #475569;
+            background: #1a2333;
+        }
+
+        /* Bouton principal */
         button {
             width: 100%;
             padding: 14px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
             color: white;
             border: none;
-            border-radius: 16px;
+            border-radius: 20px;
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             font-family: inherit;
             margin-top: 0.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        button:hover::before {
+            left: 100%;
         }
 
         button:hover {
-            transform: scale(1.02);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(56, 189, 248, 0.3);
         }
 
         button:active {
-            transform: scale(0.98);
+            transform: translateY(0px);
         }
 
+        /* Message d'erreur amélioré */
         .error-message {
-            background: #fff5f5;
-            border-left: 4px solid #f56565;
-            color: #c53030;
+            background: rgba(239, 68, 68, 0.1);
+            border-left: 4px solid #ef4444;
+            color: #fca5a5;
             padding: 12px 16px;
-            border-radius: 12px;
+            border-radius: 16px;
             margin-top: 1rem;
             font-size: 0.85rem;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
+            backdrop-filter: blur(4px);
         }
 
         .error-message::before {
             content: "⚠️";
-            font-size: 1rem;
+            font-size: 1.1rem;
         }
 
+        /* Liens footer */
         .footer-links {
             text-align: center;
-            margin-top: 1.5rem;
-            font-size: 0.85rem;
-            color: #6c757d;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #334155;
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
         }
 
         .footer-links a {
-            color: #667eea;
+            color: #94a3b8;
             text-decoration: none;
+            font-size: 0.85rem;
             font-weight: 500;
-            transition: color 0.2s;
+            transition: all 0.2s;
+            padding: 0.25rem 0;
+            position: relative;
+        }
+
+        .footer-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #38bdf8, #818cf8);
+            transition: width 0.3s ease;
         }
 
         .footer-links a:hover {
-            color: #764ba2;
-            text-decoration: underline;
+            color: #38bdf8;
         }
 
-        @media (max-width: 480px) {
+        .footer-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Indicateur de chargement */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.6s linear infinite;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive design */
+        @media (max-width: 640px) {
             .login-card {
                 padding: 1.8rem;
+                margin: 0 1rem;
+                border-radius: 32px;
             }
             
             h2 {
-                font-size: 1.7rem;
+                font-size: 1.8rem;
             }
+
+            .footer-links {
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .login-card {
+                padding: 1.5rem;
+            }
+            
+            .footer-links {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+        }
+
+        /* Animation d'entrée */
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-card {
+            animation: slideUp 0.5s ease-out;
+        }
+
+        /* Style pour l'autocomplétion */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus,
+        input:-webkit-autofill:active {
+            -webkit-box-shadow: 0 0 0 30px #1e293b inset !important;
+            -webkit-text-fill-color: #f1f5f9 !important;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+
+        /* Focus visible pour accessibilité */
+        :focus-visible {
+            outline: 2px solid #38bdf8;
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+
+        /* Amélioration de la lisibilité */
+        .input-group input[type="password"] {
+            letter-spacing: 0.2em;
         }
     </style>
 </head>
 <body>
     <div class="login-card">
+        <div class="logo-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#38bdf8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M2 17L12 22L22 17" stroke="#818cf8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M2 12L12 17L22 12" stroke="#c084fc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+        
         <h2>Bienvenue</h2>
-        <div class="subtitle">Connectez-vous à votre compte</div>
+        <div class="subtitle">Connectez-vous à votre espace sécurisé</div>
 
-        <form method="POST">
+        <form method="POST" id="loginForm">
             {% csrf_token %}
             
             <div class="input-group">
-                <input type="text" name="username" placeholder="Nom d'utilisateur" autocomplete="username">
+                <label for="username">Nom d'utilisateur</label>
+                <input 
+                    type="text" 
+                    id="username"
+                    name="username" 
+                    placeholder="ex: jean.dupont" 
+                    autocomplete="username"
+                    required
+                >
             </div>
 
             <div class="input-group">
-                <input type="password" name="password" placeholder="Mot de passe" autocomplete="current-password">
+                <label for="password">Mot de passe</label>
+                <input 
+                    type="password" 
+                    id="password"
+                    name="password" 
+                    placeholder="••••••••" 
+                    autocomplete="current-password"
+                    required
+                >
             </div>
 
-            <button type="submit">Se connecter →</button>
+            <button type="submit" id="submitBtn">
+                <span class="btn-text">Se connecter</span>
+            </button>
 
             {% if error %}
-                <div class="error-message">{{ error }}</div>
+                <div class="error-message" role="alert">{{ error }}</div>
             {% endif %}
         </form>
 
         <div class="footer-links">
-            <a href="#">Mot de passe oublié ?</a> &nbsp;|&nbsp;
-            <a href="#">Créer un compte</a>
+            <a href="#" aria-label="Mot de passe oublié">Mot de passe oublié ?</a>
+            <a href="{% url 'create_user' %}" aria-label="Créer un compte">Créer un compte</a>
         </div>
     </div>
+
+    <script>
+        // Gestion du chargement du formulaire
+        const form = document.getElementById('loginForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const btnText = submitBtn.querySelector('.btn-text');
+
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                // Validation basique côté client
+                const username = document.getElementById('username').value.trim();
+                const password = document.getElementById('password').value;
+                
+                if (!username || !password) {
+                    e.preventDefault();
+                    showCustomError('Veuillez remplir tous les champs');
+                    return;
+                }
+                
+                if (username.length < 3) {
+                    e.preventDefault();
+                    showCustomError('Le nom d\'utilisateur doit contenir au moins 3 caractères');
+                    return;
+                }
+                
+                // Afficher l'indicateur de chargement
+                submitBtn.disabled = true;
+                btnText.innerHTML = 'Connexion en cours <span class="loading"></span>';
+            });
+        }
+        
+        // Fonction pour afficher les erreurs personnalisées
+        function showCustomError(message) {
+            const existingError = document.querySelector('.error-message');
+            if (existingError) {
+                existingError.remove();
+            }
+            
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.setAttribute('role', 'alert');
+            errorDiv.textContent = message;
+            
+            form.appendChild(errorDiv);
+            
+            // Animation de vibration pour les champs
+            const inputs = document.querySelectorAll('.input-group input');
+            inputs.forEach(input => {
+                input.style.animation = 'shake 0.3s ease-in-out';
+                setTimeout(() => {
+                    input.style.animation = '';
+                }, 300);
+            });
+        }
+        
+        // Animation shake pour les erreurs
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-5px); }
+                75% { transform: translateX(5px); }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Focus automatique sur le premier champ
+        document.getElementById('username')?.focus();
+        
+        // Support du raccourci Entrée
+        const inputs = document.querySelectorAll('.input-group input');
+        inputs.forEach((input, index) => {
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && index < inputs.length - 1) {
+                    e.preventDefault();
+                    inputs[index + 1].focus();
+                }
+            });
+        });
+    </script>
 </body>
 </html>

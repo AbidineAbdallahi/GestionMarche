@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inscription | Créer votre compte</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    background: linear-gradient(145deg, #0f172a 0%, #1e293b 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Animation de fond */
+body::before {
+    content: '';
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(56, 189, 248, 0.08) 0%, transparent 70%);
+    animation: floatBackground 25s ease-in-out infinite;
+}
+
+@keyframes floatBackground {
+    0%, 100% { transform: translate(-10%, -10%) rotate(0deg); }
+    50% { transform: translate(10%, 10%) rotate(5deg); }
+}
+
+.register-card {
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(20px);
+    padding: 2.5rem;
+    border-radius: 40px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25),
+                0 0 0 1px rgba(56, 189, 248, 0.2);
+    width: 100%;
+    max-width: 560px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    z-index: 1;
+    animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.register-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(56, 189, 248, 0.4);
+}
+
+/* Icône décorative */
+.logo-icon {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.logo-icon svg {
+    width: 48px;
+    height: 48px;
+    filter: drop-shadow(0 4px 6px rgba(56, 189, 248, 0.3));
+}
+
+h2 {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
+}
+
+.subtitle {
+    text-align: center;
+    color: #94a3b8;
+    margin-bottom: 2rem;
+    font-size: 0.9rem;
+    font-weight: 400;
+}
+
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #cbd5e1;
+    font-size: 0.85rem;
+    letter-spacing: 0.01em;
+}
+
+input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid #334155;
+    border-radius: 20px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    background: #0f172a;
+    color: #f1f5f9;
+    font-family: inherit;
+}
+
+input::placeholder {
+    color: #475569;
+    font-weight: 400;
+}
+
+input:focus {
+    outline: none;
+    border-color: #38bdf8;
+    background: #1e293b;
+    box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.1);
+}
+
+input:hover:not(:focus) {
+    border-color: #475569;
+    background: #1a2333;
+}
+
+/* Forceps pour l'autocomplétion */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px #1e293b inset !important;
+    -webkit-text-fill-color: #f1f5f9 !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+button {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    position: relative;
+    overflow: hidden;
+}
+
+button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+button:hover::before {
+    left: 100%;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -5px rgba(56, 189, 248, 0.3);
+}
+
+button:active {
+    transform: translateY(0px);
+}
+
+/* Styles pour les erreurs du formulaire */
+.errorlist {
+    background: rgba(239, 68, 68, 0.1);
+    border-left: 4px solid #ef4444;
+    color: #fca5a5;
+    padding: 12px 16px;
+    border-radius: 16px;
+    margin-bottom: 1.5rem;
+    list-style: none;
+    font-size: 0.85rem;
+    backdrop-filter: blur(4px);
+}
+
+.errorlist li {
+    margin: 4px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.errorlist li::before {
+    content: "⚠️";
+    font-size: 0.9rem;
+}
+
+/* Messages d'erreur par champ */
+.field-error {
+    color: #fca5a5;
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+    margin-left: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.field-error::before {
+    content: "⚠️";
+    font-size: 0.7rem;
+}
+
+input.error-input {
+    border-color: #ef4444;
+}
+
+input.error-input:focus {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
+}
+
+/* Indicateur de force du mot de passe */
+.password-strength {
+    margin-top: 0.5rem;
+    height: 4px;
+    background: #334155;
+    border-radius: 4px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.strength-bar {
+    height: 100%;
+    width: 0%;
+    transition: width 0.3s ease, background 0.3s ease;
+    border-radius: 4px;
+}
+
+.strength-text {
+    font-size: 0.7rem;
+    margin-top: 0.25rem;
+    color: #94a3b8;
+}
+
+/* Indicateur de correspondance des mots de passe */
+.password-match {
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+    margin-left: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.password-match.valid {
+    color: #4ade80;
+}
+
+.password-match.invalid {
+    color: #fca5a5;
+}
+
+.footer-links {
+    text-align: center;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #334155;
+}
+
+.footer-links a {
+    color: #94a3b8;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+    padding: 0.25rem 0;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.footer-links a::before {
+    content: "←";
+    transition: transform 0.2s;
+}
+
+.footer-links a:hover {
+    color: #38bdf8;
+}
+
+.footer-links a:hover::before {
+    transform: translateX(-3px);
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .register-card {
+        padding: 1.8rem;
+        margin: 0 1rem;
+        border-radius: 32px;
+    }
+    
+    h2 {
+        font-size: 1.7rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .register-card {
+        padding: 1.5rem;
+    }
+    
+    .form-group {
+        margin-bottom: 1rem;
+    }
+    
+    input {
+        padding: 12px 14px;
+    }
+}
+
+/* Focus visible pour accessibilité */
+:focus-visible {
+    outline: 2px solid #38bdf8;
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* Animation shake pour les erreurs */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+.shake {
+    animation: shake 0.3s ease-in-out;
+}
+
+/* Indicateur de chargement */
+.loading {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 0.6s linear infinite;
+    margin-left: 8px;
+    vertical-align: middle;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+button:disabled:hover {
+    transform: none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="register-card">
+    <div class="logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17 21V19C17 16.8 15.2 15 13 15H5C2.8 15 1 16.8 1 19V21" stroke="#38bdf8" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="9" cy="7" r="4" stroke="#818cf8" stroke-width="1.5"/>
+            <path d="M23 21V19C22.9 16.8 21.1 15 19 15" stroke="#c084fc" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M16 3.13C17.8 3.55 19 5.14 19 7" stroke="#c084fc" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+    </div>
+    
+    <h2>Créer un compte</h2>
+    <div class="subtitle">Rejoignez notre communauté</div>
+
+    <form method="POST" id="registerForm">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <ul class="errorlist">
+                {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <div class="form-group">
+            <label for="id_first_name">Prénom</label>
+            {{ form.first_name }}
+            {% if form.first_name.errors %}
+                <div class="field-error">{{ form.first_name.errors.0 }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="id_last_name">Nom</label>
+            {{ form.last_name }}
+            {% if form.last_name.errors %}
+                <div class="field-error">{{ form.last_name.errors.0 }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="id_email">Email</label>
+            {{ form.email }}
+            {% if form.email.errors %}
+                <div class="field-error">{{ form.email.errors.0 }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="id_password1">Mot de passe</label>
+            {{ form.password1 }}
+            <div class="password-strength">
+                <div class="strength-bar" id="strengthBar"></div>
+            </div>
+            <div class="strength-text" id="strengthText"></div>
+            {% if form.password1.errors %}
+                <div class="field-error">{{ form.password1.errors.0 }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="id_password2">Confirmer mot de passe</label>
+            {{ form.password2 }}
+            <div class="password-match" id="passwordMatchMsg"></div>
+            {% if form.password2.errors %}
+                <div class="field-error">{{ form.password2.errors.0 }}</div>
+            {% endif %}
+        </div>
+
+        <button type="submit" id="submitBtn">
+            <span class="btn-text">Créer le compte →</span>
+        </button>
+    </form>
+
+    <div class="footer-links">
+        <a href="{% url 'login' %}">
+            Retour à la connexion
+        </a>
+    </div>
+</div>
+
+<script>
+// Indicateur de force du mot de passe
+const passwordInput = document.getElementById('id_password1');
+const password2Input = document.getElementById('id_password2');
+const strengthBar = document.getElementById('strengthBar');
+const strengthText = document.getElementById('strengthText');
+const matchMsg = document.getElementById('passwordMatchMsg');
+const form = document.getElementById('registerForm');
+const submitBtn = document.getElementById('submitBtn');
+const btnText = submitBtn.querySelector('.btn-text');
+
+function checkPasswordStrength(password) {
+    let strength = 0;
+    let message = '';
+    let color = '';
+    
+    if (password.length === 0) {
+        return { strength: 0, message: '', color: '#334155' };
+    }
+    
+    // Longueur
+    if (password.length >= 8) strength += 1;
+    if (password.length >= 12) strength += 1;
+    
+    // Lettres minuscules
+    if (/[a-z]/.test(password)) strength += 1;
+    
+    // Lettres majuscules
+    if (/[A-Z]/.test(password)) strength += 1;
+    
+    // Chiffres
+    if (/\d/.test(password)) strength += 1;
+    
+    // Caractères spéciaux
+    if (/[^a-zA-Z0-9]/.test(password)) strength += 1;
+    
+    // Déterminer la force
+    if (strength <= 2) {
+        message = '🔴 Faible';
+        color = '#ef4444';
+    } else if (strength <= 4) {
+        message = '🟡 Moyen';
+        color = '#f59e0b';
+    } else {
+        message = '🟢 Fort';
+        color = '#4ade80';
+    }
+    
+    const percentWidth = (strength / 6) * 100;
+    
+    return { strength: percentWidth, message, color };
+}
+
+if (passwordInput) {
+    passwordInput.addEventListener('input', function() {
+        const result = checkPasswordStrength(this.value);
+        strengthBar.style.width = result.strength + '%';
+        strengthBar.style.background = result.color;
+        strengthText.textContent = result.message;
+        strengthText.style.color = result.color;
+        
+        // Vérifier la correspondance des mots de passe
+        if (password2Input && password2Input.value) {
+            checkPasswordMatch();
+        }
+    });
+}
+
+function checkPasswordMatch() {
+    if (!passwordInput || !password2Input) return;
+    
+    const password = passwordInput.value;
+    const confirm = password2Input.value;
+    
+    if (confirm.length === 0) {
+        matchMsg.textContent = '';
+        matchMsg.className = 'password-match';
+        return;
+    }
+    
+    if (password === confirm) {
+        matchMsg.textContent = '✓ Les mots de passe correspondent';
+        matchMsg.className = 'password-match valid';
+    } else {
+        matchMsg.textContent = '✗ Les mots de passe ne correspondent pas';
+        matchMsg.className = 'password-match invalid';
+    }
+}
+
+if (password2Input) {
+    password2Input.addEventListener('input', checkPasswordMatch);
+}
+
+// Validation des champs en temps réel
+function validateEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+}
+
+const emailInput = document.getElementById('id_email');
+if (emailInput) {
+    emailInput.addEventListener('blur', function() {
+        if (this.value && !validateEmail(this.value)) {
+            this.classList.add('error-input');
+            // Ajouter message d'erreur si non existant
+            let errorMsg = this.parentElement.querySelector('.field-error');
+            if (!errorMsg) {
+                errorMsg = document.createElement('div');
+                errorMsg.className = 'field-error';
+                this.parentElement.appendChild(errorMsg);
+            }
+            errorMsg.textContent = 'Veuillez entrer une adresse email valide';
+        } else {
+            this.classList.remove('error-input');
+            const errorMsg = this.parentElement.querySelector('.field-error');
+            if (errorMsg && errorMsg.textContent === 'Veuillez entrer une adresse email valide') {
+                errorMsg.remove();
+            }
+        }
+    });
+}
+
+// Validation avant soumission
+if (form) {
+    form.addEventListener('submit', function(e) {
+        let hasError = false;
+        
+        // Vérifier les champs obligatoires
+        const firstname = document.getElementById('id_first_name');
+        const lastname = document.getElementById('id_last_name');
+        const email = document.getElementById('id_email');
+        const password = document.getElementById('id_password1');
+        const password2 = document.getElementById('id_password2');
+        
+        if (firstname && !firstname.value.trim()) {
+            showFieldError(firstname, 'Le prénom est requis');
+            hasError = true;
+        }
+        
+        if (lastname && !lastname.value.trim()) {
+            showFieldError(lastname, 'Le nom est requis');
+            hasError = true;
+        }
+        
+        if (email && (!email.value.trim() || !validateEmail(email.value))) {
+            showFieldError(email, 'Veuillez entrer un email valide');
+            hasError = true;
+        }
+        
+        if (password && password.value.length < 8) {
+            showFieldError(password, 'Le mot de passe doit contenir au moins 8 caractères');
+            hasError = true;
+        }
+        
+        if (password2 && password2.value !== password.value) {
+            showFieldError(password2, 'Les mots de passe ne correspondent pas');
+            hasError = true;
+        }
+        
+        if (hasError) {
+            e.preventDefault();
+            // Animer les champs en erreur
+            document.querySelectorAll('.error-input').forEach(field => {
+                field.classList.add('shake');
+                setTimeout(() => field.classList.remove('shake'), 300);
+            });
+            return;
+        }
+        
+        // Afficher l'indicateur de chargement
+        submitBtn.disabled = true;
+        btnText.innerHTML = 'Création en cours <span class="loading"></span>';
+    });
+}
+
+function showFieldError(field, message) {
+    field.classList.add('error-input');
+    let errorMsg = field.parentElement.querySelector('.field-error');
+    if (!errorMsg) {
+        errorMsg = document.createElement('div');
+        errorMsg.className = 'field-error';
+        field.parentElement.appendChild(errorMsg);
+    }
+    errorMsg.textContent = message;
+}
+
+// Nettoyer les classes d'erreur lors de la saisie
+document.querySelectorAll('input').forEach(input => {
+    input.addEventListener('input', function() {
+        this.classList.remove('error-input');
+        const errorMsg = this.parentElement.querySelector('.field-error');
+        if (errorMsg && !errorMsg.textContent.includes('valide')) {
+            errorMsg.remove();
+        }
+    });
+});
+
+// Focus automatique sur le premier champ
+if (document.getElementById('id_first_name')) {
+    document.getElementById('id_first_name').focus();
+}
+</script>
+
+</body>
+</html>
