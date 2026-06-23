@@ -70,15 +70,8 @@ WSGI_APPLICATION = 'gestion_marches.wsgi.application'
 # Database
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get('DB_NAME', 'marches_db'),
-        'USER': os.environ.get('DB_USER', 'root'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', '36298932'),
-        'HOST': os.environ.get('DB_HOST', 'localhost'),
-        'PORT': os.environ.get('DB_PORT', '3306'),
-        'OPTIONS': {
-            'charset': 'utf8mb4',
-        }
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
@@ -131,9 +124,6 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 FILES_HTTP_BASE_URL = os.environ.get('FILES_HTTP_BASE_URL', 'http://localhost:8081/')
-
-import pymysql
-pymysql.install_as_MySQLdb()
 
 DOCS_MARCHE_ROOT = os.environ.get('DOCS_MARCHE_ROOT', os.path.join(BASE_DIR, 'docs_marche'))
 
