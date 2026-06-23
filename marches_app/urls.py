@@ -25,6 +25,7 @@ urlpatterns = [
     path('visiteur/', views.visiteurs_view, name='visiteur'),
     path("register/", views.register_view, name="create_user"),
     path("entreprises/ajouter/", views.attributaire_create, name="attributaire_create"),
+    path("docs/<str:marche_id>/<str:filename>", views.serve_document, name="serve_document"),
 ]
 
 

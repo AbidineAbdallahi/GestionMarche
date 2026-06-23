@@ -361,7 +361,7 @@ from django.db import transaction
 
 
 
-BASE_FOLDER = r"C:\Users\abidi\Desktop\ExtractionDonne\docs_marche"
+BASE_FOLDER = settings.DOCS_MARCHE_ROOT
 from decimal import Decimal, InvalidOperation
 
 @never_cache
@@ -676,3 +676,23 @@ def attributaire_create(request):
     return render(request, "attributaire_form.html", {
         "form": form
     })
+
+
+# ======================================================
+# 📂 SERVIR LES DOCUMENTS (docs_marche)
+# ======================================================
+
+@never_cache
+@login_required
+def serve_document(request, marche_id, filename):
+    import mimetypes
+    from django.http import FileResponse, Http404
+
+    file_path = os.path.join(settings.DOCS_MARCHE_ROOT, marche_id, filename)
+    if not os.path.exists(file_path):
+        raise Http404("Document introuvable")
+
+    content_type, _ = mimetypes.guess_type(file_path)
+    content_type = content_type or "application/octet-stream"
+
+    return FileResponse(open(file_path, "rb"), content_type=content_type)
